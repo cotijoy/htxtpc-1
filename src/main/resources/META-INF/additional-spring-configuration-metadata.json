@@ -1,0 +1,38 @@
+{
+  "properties": [
+    {
+      "name": "zconnection.type",
+      "type": "java.lang.String",
+      "description": "esb/odata."
+    },
+    {
+      "name": "zconnection.odataIp",
+      "type": "java.lang.String",
+      "description": "Description for zconnection.odataIp."
+    },
+    {
+      "name": "zconnection.odataPort",
+      "type": "java.lang.String",
+      "description": "Description for zconnection.odataPort."
+    },
+    {
+      "name": "zconnection.odataUser",
+      "type": "java.lang.String",
+      "description": "Description for zconnection.odataUser."
+    },
+    {
+      "name": "zconnection.odataPasswd",
+      "type": "java.lang.String",
+      "description": "Description for zconnection.odataPasswd."
+    },
+    {
+      "name": "zconnection.odataClient",
+      "type": "java.lang.String",
+      "description": "Description for zconnection.odataClient."
+    },
+    {
+      "name": "zconnection.esbIp",
+      "type": "java.lang.String",
+      "description": "Description for zconnection.esbIp."
+    }
+  ] }

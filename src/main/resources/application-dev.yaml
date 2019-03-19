@@ -1,0 +1,45 @@
+#debug: true
+
+server:
+  port: 21010
+  tomcat.uri-encoding: UTF-8
+  server-header: text/plain;charset=UTF-8
+  servlet:
+    context-path: /
+    session.timeout: 900 #session timeout in seconds
+spring:
+  messages.encoding: UTF-8
+  http:
+    encoding:
+      force: true
+      charset: UTF-8
+      enabled: true
+  session.store-type: redis
+  redis:
+    database: 12
+#    host: 127.0.0.1
+    host: 10.154.96.70
+    port: 6379
+    password: Passw0rd
+#    host: 118.31.14.156
+#    port: 26379
+    jedis:
+      pool:
+        max-idle: 8
+        max-wait: -1
+        min-idle: 0
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      enabled: true
+      max-request-size: 100MB
+
+#esb/odata
+zconnection:
+  type: odata
+  odataIp: http://10.154.96.65
+  odataPort: 8000
+  odataUser: cg_fangwei
+  odataPasswd: siemens
+  odataClient: 103
+  esbIp: http://10.154.97.1:8010/
