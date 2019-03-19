@@ -1,6 +1,8 @@
 package com.magustek.com.htxtpc.util.httpUtil.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Strings;
 import com.magustek.com.htxtpc.config.HttpConnectConfig;
 import com.magustek.com.htxtpc.util.ContextUtils;
@@ -228,6 +230,7 @@ public class HttpUtilsImpl implements HttpUtils {
 
         if("odata".equals(config.getType())) {
             //拼接url
+            url = url.endsWith(")") ? url+"?" : url;
             urlString.append(config.getOdataIp()).append(":").append(config.getOdataPort())
                     .append(odataString)
                     .append(url)

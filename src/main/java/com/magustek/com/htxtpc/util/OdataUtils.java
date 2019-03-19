@@ -3,8 +3,10 @@ package com.magustek.com.htxtpc.util;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.annotation.JSONField;
 import com.google.common.base.Strings;
 
+import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -20,29 +22,7 @@ public class OdataUtils {
     public static final String ConfigDataSource = "ZCM_ODATA_CONFIG_SRV/ConfigDataSourceSet";
     public static final String OrginazationSet = "ZCM_ODATA_ORG_SRV/OrginazationSet";
 
-    public static final String IEPlanOperationSet = "ZCM_ODATA_PLAN_SRV/IEPlanOperationSet";
-    public static final String IEPlanCalculationSet = "ZCM_ODATA_PLAN_SRV/IEPlanCalculationSet";
-
-    public static final String IEPlanReportHeadSet = "ZCM_ODATA_PLAN_SRV/IEPlanReportHeadSet";
-    public static final String IEPlanReportItemSet = "ZCM_ODATA_PLAN_SRV/IEPlanReportItemSet";
-    public static final String IEPlanStatisticSet = "ZCM_ODATA_PLAN_SRV/IEPlanStatisticSet";
-
-    public static final String IEPlanSelectDataSet = "ZCM_ODATA_PLAN_SRV/IEPlanSelectDataSet";
-    public static final String IEPlanSelectValueSet = "ZCM_ODATA_PLAN_SRV/IEPlanSelectValueSet";
-
-    public static final String IEPlanDimensionSet = "ZCM_ODATA_PLAN_SRV/IEPlanDimensionSet";
-    public static final String IEPlanDimenValueSet = "ZCM_ODATA_PLAN_SRV/IEPlanDimenValueSet";
-
-    public static final String IEPlanPaymentSet = "ZCM_ODATA_PLAN_SRV/IEPlanPaymentSet";
-    public static final String IEPlanTermsSet = "ZCM_ODATA_PLAN_SRV/IEPlanTermsSet";
-
-    public static final String IEPlanBusinessHeadSet = "ZCM_ODATA_PLAN_SRV/IEPlanBusinessHeadSet";
-    public static final String IEPlanBusinessItemSet = "ZCM_ODATA_PLAN_SRV/IEPlanBusinessItemSet";
-
-    public static final String IEPlanScreenHeadSet = "ZCM_ODATA_PLAN_SRV/IEPlanScreenHeadSet";
-    public static final String IEPlanScreenItemSet = "ZCM_ODATA_PLAN_SRV/IEPlanScreenItemSet";
-
-    //public static final String IEPlanContractHeadSet = "ZCM_ODATA_PLAN_SRV/IEPlanContractHeadSet";
+    public static final String ContractHeaderSet = "ZCM_ODATA_CONTRACT_SRV/ContractHeaderSet";
 
     /**
      * 调用odata返回多条记录： 以实体返回
@@ -91,7 +71,7 @@ public class OdataUtils {
      * @param keys 指定日期键
      * @param pattern 日期格式
      */
-    private static String formatDateByPattern(String jsonStr,String[] keys,String pattern) throws Exception {
+    public static String formatDateByPattern(String jsonStr,String[] keys,String pattern) throws Exception {
         if (Strings.isNullOrEmpty(pattern)) {
             return jsonStr;
         }
@@ -130,7 +110,7 @@ public class OdataUtils {
             throw new Exception("Odata 返回数据有误！:"+o.toString());
         }
     }
-    private static JSONObject handleValue(String[] keys, Function<String, String> function, JSONObject d){
+    private static void handleValue(String[] keys, Function<String, String> function, JSONObject d){
         for (String key : keys) {
             String value = d.getString(key);
             if (null != value) {
@@ -138,6 +118,32 @@ public class OdataUtils {
                 d.put(key, formatValue);
             }
         }
-        return d;
+    }
+    /**
+     * extractODataField(抽取实体上注解映射字段名称，拼接成字符串返回)
+     * @param model 含有@JSONField注解的OData映射实体
+     * @return String    DOM对象
+     */
+    public static String extractODataField(Class<?> model){
+        //字段拼接容器
+        StringBuilder buffer = new StringBuilder();
+        //解析字段上是否有注解,getDeclaredFields会返回类所有声明的字段，包括private、protected、public，但是不包括父类的
+        //getFields:则会返回包括父类的所有的public字段，和getMethods()一样
+        Field[] fields = model.getDeclaredFields();
+        for (Field field : fields) {
+/*            boolean annotationPresent = field.isAnnotationPresent(JSONField.class);
+            //判断字段上存在@JSONField注解
+            if (annotationPresent) {
+                JSONField annotation = field.getAnnotation(JSONField.class);
+                String name = annotation.name();
+                buffer.append(name).append(",");
+            }*/
+            buffer.append(field.getName()).append(",");
+        }
+        //去除“,”
+        if (buffer.length()>1 && buffer.lastIndexOf(",")>0) {
+            return buffer.substring(0, buffer.length()-1);
+        }
+        return buffer.toString();
     }
 }
