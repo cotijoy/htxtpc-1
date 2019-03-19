@@ -22,6 +22,7 @@ public class AllowResource {
             "/**/*.*",
             "/**/*.font",
             "/",
+            //"/test/*",
             "/#login"
     };
 }
