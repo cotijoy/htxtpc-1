@@ -2,10 +2,12 @@ package com.magustek.com.htxtpc.util.test;
 
 import com.magustek.com.htxtpc.util.OdataUtils;
 import com.magustek.com.htxtpc.util.httpUtil.HttpUtils;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 
 @Service("TestService")
+@Cacheable(value = "contractMn")
 public class TestServiceImpl implements TestService {
     private HttpUtils httpUtils;
 

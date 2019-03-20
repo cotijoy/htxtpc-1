@@ -23,7 +23,6 @@ import java.util.Map;
 
 @Slf4j
 @Component("userInfoService")
-@Cacheable(value = "UserInfo")
 public class UserInfoServiceImpl implements UserInfoService {
     private HttpUtils httpUtils;
 

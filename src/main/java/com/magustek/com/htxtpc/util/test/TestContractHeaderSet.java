@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 
 @Getter
 @Setter
-class TestContractHeaderSet implements Serializable {
+public class TestContractHeaderSet implements Serializable {
 
     private String Htnum;//合同管理编号
     private String Htsno;//合同流水号
