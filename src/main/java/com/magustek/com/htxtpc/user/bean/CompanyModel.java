@@ -17,4 +17,5 @@ public class CompanyModel implements Serializable{
     private String Orgcode;      //组织机构编号
     private String Usersource;//用户来源(I - 内部    E - 外部)
     private String Loginname;  //登录用户名
+    private String test;
 }
