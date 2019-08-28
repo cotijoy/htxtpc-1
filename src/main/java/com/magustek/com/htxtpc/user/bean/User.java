@@ -17,7 +17,7 @@ public class User extends BaseEntity {
     @ApiModelProperty(value = "部门编码")
     @Column(nullable = false) private String departmentCode;
     @ApiModelProperty(value = "岗位编码")
-    @Column(nullable = false) private String jobCode;
+    @Column(nullable = false) private String positionCode;
     @ApiModelProperty(value = "用户编码")
     @Column(nullable = false) private String userCode;
     @ApiModelProperty(value = "用户名称")
@@ -27,9 +27,9 @@ public class User extends BaseEntity {
     @ApiModelProperty(value = "企业编码")
     @Column() private String userOrder;
     @ApiModelProperty(value = "电话号码")
-    @Column() private String userTelPhone;
+    @Column() private String userTelphone;
     @ApiModelProperty(value = "手机号码")
-    @Column() private String userCellPhone;
+    @Column() private String userCellphone;
     @ApiModelProperty(value = "邮箱地址")
     @Column() private String userEmail;
 }
