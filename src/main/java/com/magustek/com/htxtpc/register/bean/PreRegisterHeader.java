@@ -1,4 +1,4 @@
-package com.magustek.com.htxtpc.user.bean;
+package com.magustek.com.htxtpc.register.bean;
 
 import com.magustek.com.htxtpc.util.base.BaseEntity;
 import io.swagger.annotations.ApiModel;
@@ -8,10 +8,10 @@ import lombok.Data;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 
-@ApiModel(value = "RegisterHeader-用户注册抬头")
+@ApiModel(value = "PreRegisterHeader-用户(预)注册抬头")
 @Data
 @Entity
-public class RegisterHeader extends BaseEntity {
+public class PreRegisterHeader extends BaseEntity {
     @ApiModelProperty(value = "企业编码")
     @Column(nullable = false) private String companyCode;
     @ApiModelProperty(value = "用户名")
