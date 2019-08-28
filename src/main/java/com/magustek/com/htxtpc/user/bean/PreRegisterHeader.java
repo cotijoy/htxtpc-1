@@ -31,8 +31,7 @@ public class PreRegisterHeader extends BaseEntity {
     @ApiModelProperty(value = "邮箱")
     @Column(nullable = false) private String roleCode;
     @ApiModelProperty(value = "注册密码")
-    @Column(nullable = false) private String registerPassword;
+    @Column(nullable = false) private String password;
     @ApiModelProperty(value = "主营业务")
     @Column(nullable = false) private String mainBusiness;
-
 }
