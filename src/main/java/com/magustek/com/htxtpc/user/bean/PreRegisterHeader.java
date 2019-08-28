@@ -15,7 +15,7 @@ public class PreRegisterHeader extends BaseEntity {
     @ApiModelProperty(value = "企业编码")
     @Column(nullable = false) private String companyCode;
     @ApiModelProperty(value = "用户名")
-    @Column(nullable = false) private String userName;
+    @Column(nullable = false) private String username;
     @ApiModelProperty(value = "管理员标识")
     @Column(nullable = false) private String adminFlag;
     @ApiModelProperty(value = "电话号码区号")

@@ -15,7 +15,7 @@ public class PreRegisterLineitemDocument extends BaseEntity {
     @ApiModelProperty(value = "企业编码")
     @Column(nullable = false) private String companyCode;
     @ApiModelProperty(value = "用户名")
-    @Column(nullable = false) private String userName;
+    @Column(nullable = false) private String username;
     @ApiModelProperty(value = "资料流水号")
     @Column(nullable = false) private String documentSerialNum;
     @ApiModelProperty(value = "资料内容")

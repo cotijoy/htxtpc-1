@@ -21,7 +21,7 @@ public class User extends BaseEntity {
     @ApiModelProperty(value = "用户编码")
     @Column(nullable = false) private String userCode;
     @ApiModelProperty(value = "用户名称")
-    @Column() private String userName;
+    @Column() private String username;
     @ApiModelProperty(value = "用户全称")
     @Column() private String userFullName;
     @ApiModelProperty(value = "企业编码")
