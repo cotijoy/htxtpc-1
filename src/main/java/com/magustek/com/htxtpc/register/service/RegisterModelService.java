@@ -1,5 +1,6 @@
 package com.magustek.com.htxtpc.register.service;
 
+import com.magustek.com.htxtpc.register.bean.CaptchaConfig;
 import com.magustek.com.htxtpc.register.bean.RegisterModel;
 
 import java.util.Map;
@@ -7,4 +8,6 @@ import java.util.Map;
 public interface RegisterModelService {
 
     Map<String,Object> register(RegisterModel registerModel) ;
+    Map<String, Object> sendPhoneCaptcha(CaptchaConfig captchaConfig, String phoneNum);
+    Map<String,Object> sendEmailCaptcha(CaptchaConfig captchaConfig, String email);
 }

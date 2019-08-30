@@ -80,3 +80,14 @@ zconnection:
   odataPasswd: siemens
   odataClient: 103
   esbIp: http://10.154.97.1:8010/
+
+#阿里短信+邮箱验证
+captcha:
+  #短信
+  regionId: cn-hangzhou
+  accessKeyId: 123
+  accessSecret: 123
+  #邮箱
+  mailHost: smtp.qq.com
+  userName: 2562539309@qq.com
+  password: apkfjdoobqkceahd
