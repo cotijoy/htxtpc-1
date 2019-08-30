@@ -6,5 +6,5 @@ import java.util.Map;
 
 public interface RegisterModelService {
 
-    Map<String,Object> register(RegisterModel registerModel) throws Exception;
+    Map<String,Object> register(RegisterModel registerModel) ;
 }
