@@ -31,7 +31,7 @@ public class RegisterHeader extends BaseEntity {
     @ApiModelProperty(value = "手机号码")
     @Column(nullable = false) private String phoneNum;
     @ApiModelProperty(value = "邮箱")
-    @Column(nullable = false) private String roleCode;
+    @Column(nullable = false) private String email;
     @ApiModelProperty(value = "注册密码")
     @Column(nullable = false) private String password;
     @ApiModelProperty(value = "主营业务")
