@@ -23,6 +23,7 @@ public class AllowResource {
             "/**/*.font",
             "/",
             //"/test/*",
-            "/#login"
+            "/#login",
+            "/register"
     };
 }
