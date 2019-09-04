@@ -25,7 +25,7 @@ public class RegisterModel {
     private String password;                                    //密码
     private String mainBusiness;                                //主营业务
     private String adminFlag;                                   //管理员标识 是：Y，否:N
-    private String[] documentTypes;                            //附件类型
-    private Integer[] documentNums;                           //附件个数
-    private MultipartFile[] documents;                        //附件数据（图片、文件）
+    private String[] documentTypes;                             //附件类型
+    private Integer[] documentNums;                             //附件个数
+    private MultipartFile[] documents;                          //附件数据（图片、文件）
 }
