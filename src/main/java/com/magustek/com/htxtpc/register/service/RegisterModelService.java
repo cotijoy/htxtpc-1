@@ -8,6 +8,7 @@ import java.util.Map;
 public interface RegisterModelService {
 
     Map<String,Object> register(RegisterModel registerModel) ;
-    Map<String, Object> sendPhoneCaptcha(CaptchaConfig captchaConfig, String phoneNum);
-    Map<String,Object> sendEmailCaptcha(CaptchaConfig captchaConfig, String email);
+    String sendEmailCaptchaAndVerifyUser(String userName, String email);
+    String emailCaptchaVerify(String email, String captcha);
+    void updatePassword(String username, String password);
 }

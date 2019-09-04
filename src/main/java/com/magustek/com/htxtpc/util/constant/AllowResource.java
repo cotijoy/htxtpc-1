@@ -24,6 +24,6 @@ public class AllowResource {
             "/",
             //"/test/*",
             "/#login",
-            "/register"
+            "/register/*"
     };
 }

@@ -19,14 +19,14 @@ public class Swagger2 {
         return new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(apiInfo())
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("com.magustek.szjh"))
+                .apis(RequestHandlerSelectors.basePackage("com.magustek.com.htxtpc"))
                 .paths(PathSelectors.any())
                 .build();
     }
 
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
-                .title("szjh 0.1 RestFull APIs")
+                .title("htxtpc 0.1 RestFull APIs")
                 .description("Build by Swagger2")
                 //.termsOfServiceUrl("http://blog.didispace.com/")
                 //.contact("程序猿DD")

@@ -5,6 +5,9 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
+import org.springframework.beans.factory.annotation.Value;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,6 +15,7 @@ import javax.persistence.Entity;
 @ApiModel(value = "RegisterHeader-用户注册抬头")
 @Data
 @Entity
+@NoArgsConstructor
 @AllArgsConstructor
 public class RegisterHeader extends BaseEntity {
     @ApiModelProperty(value = "企业编码")

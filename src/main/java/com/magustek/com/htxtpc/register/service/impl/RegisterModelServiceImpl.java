@@ -9,16 +9,15 @@ import com.aliyuncs.exceptions.ClientException;
 import com.aliyuncs.exceptions.ServerException;
 import com.aliyuncs.http.MethodType;
 import com.aliyuncs.profile.DefaultProfile;
-import com.magustek.com.htxtpc.register.bean.CaptchaConfig;
-import com.magustek.com.htxtpc.register.bean.RegisterModel;
+import com.magustek.com.htxtpc.register.bean.*;
 import com.magustek.com.htxtpc.register.dao.*;
 import com.magustek.com.htxtpc.register.service.RegisterModelService;
-import com.magustek.com.htxtpc.register.bean.PreRegisterHeader;
-import com.magustek.com.htxtpc.register.bean.PreRegisterLineitemDocument;
 import com.magustek.com.htxtpc.user.dao.CompanyDAO;
+import com.magustek.com.htxtpc.util.base.BaseResponse;
 import com.magustek.com.htxtpc.util.common.util.CommonUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -33,7 +32,7 @@ import java.util.Properties;
 import java.util.UUID;
 
 @Slf4j
-@Service("PlanHeaderService")
+@Service("RegisterModelService")
 public class RegisterModelServiceImpl implements RegisterModelService {
     private RegisterModelDAO registerModelDAO;
     private PreRegisterHeaderDAO preRegisterHeaderDAO;
@@ -41,19 +40,27 @@ public class RegisterModelServiceImpl implements RegisterModelService {
     private RegisterHeaderDAO registerHeaderDAO;
     private RegisterLineitemDocumentDAO registerLineitemDocumentDAO;
     private CompanyDAO companyDAO;
+    private RedisTemplate<String,Object> redisTemplate;
+    private CaptchaConfig captchaConfig;
+    private BaseResponse resp;
 
     public RegisterModelServiceImpl(RegisterModelDAO registerModelDAO,
                                     PreRegisterHeaderDAO preRegisterHeaderDAO,
                                     PreRegisterLineitemDocumentDAO preRegisterLineitemDocumentDAO,
                                     RegisterHeaderDAO registerHeaderDAO,
                                     RegisterLineitemDocumentDAO registerLineitemDocumentDAO,
-                                    CompanyDAO companyDAO) {
+                                    CompanyDAO companyDAO,
+                                    RedisTemplate redisTemplate,
+                                    CaptchaConfig captchaConfig) {
         this.registerModelDAO = registerModelDAO;
         this.preRegisterHeaderDAO = preRegisterHeaderDAO;
         this.preRegisterLineitemDocumentDAO = preRegisterLineitemDocumentDAO;
         this.registerHeaderDAO = registerHeaderDAO;
         this.registerLineitemDocumentDAO = registerLineitemDocumentDAO;
         this.companyDAO = companyDAO;
+        this.redisTemplate = redisTemplate;
+        this.captchaConfig = captchaConfig;
+        resp = new BaseResponse();
     }
 
     @Override
@@ -120,15 +127,48 @@ public class RegisterModelServiceImpl implements RegisterModelService {
         result.put("preRegisterLineitemDocumentLists",preRegisterLineitemDocumentLists);
         return result;
     }
-
+    /**
+     * 发送邮箱验证码并校验用户是否存在
+     */
+    @Override
+    public String sendEmailCaptchaAndVerifyUser(String username, String email){
+        if(!email.matches("^\\w+@(\\w+\\.)+\\w+$")){
+            return resp.setStateCode(BaseResponse.ERROR).setMsg("邮箱格式不正确").toJson();
+        }
+        if (registerHeaderDAO.findByUsername(username)==null){
+            return resp.setStateCode(BaseResponse.ERROR).setMsg("用户不存在").toJson();
+        } else if (!registerHeaderDAO.findByUsername(username).getEmail().equals(email)){
+            return resp.setStateCode(BaseResponse.ERROR).setMsg("用户邮箱不正确").toJson();
+        }
+        this.sendEmailCaptcha(email);
+        return resp.setStateCode(BaseResponse.SUCCESS).setMsg("邮箱验证码发送成功").toJson();
+    }
+    /**
+     * 校验验证码是否正确
+     */
+    @Override
+    public String emailCaptchaVerify(String email, String captcha){
+        if (captcha.equals(redisTemplate.boundHashOps("emailCaptcha").get(email))){
+            redisTemplate.boundHashOps("emailCaptcha").delete(email);
+            return resp.setStateCode(BaseResponse.SUCCESS).setMsg("验证码正确").toJson();
+        }
+        return resp.setStateCode(BaseResponse.ERROR).setMsg("验证码错误").toJson();
+    }
+    /**
+     * 更新用户密码
+     */
+    @Override
+    public void updatePassword(String username, String password){
+        RegisterHeader header = registerHeaderDAO.findByUsername(username);
+        header.setPassword(password);
+        registerHeaderDAO.save(header);
+    }
     /**
      * 发送短信验证码
-     * @param captchaConfig
      * @param phoneNum
      * @return
      */
-    @Override
-    public Map<String, Object> sendPhoneCaptcha(CaptchaConfig captchaConfig, String phoneNum) {
+    private void sendPhoneCaptcha(String phoneNum) {
         // 创建DefaultAcsClient实例并初始化
         DefaultProfile profile = DefaultProfile.getProfile(captchaConfig.getRegionId(), captchaConfig.getAccessKeyId(), captchaConfig.getAccessSecret());
         IAcsClient client = new DefaultAcsClient(profile);
@@ -164,17 +204,14 @@ public class RegisterModelServiceImpl implements RegisterModelService {
         } catch (ClientException e) {
             e.printStackTrace();
         }
-        return null;
     }
 
     /**
      * 发送邮箱验证码
-     * @param captchaConfig
      * @param email
      * @return
      */
-    @Override
-    public Map<String,Object> sendEmailCaptcha(CaptchaConfig captchaConfig, String email){
+    private void sendEmailCaptcha(String email){
         String code = UUID.randomUUID().toString().substring(0,4);
         //获得一个Session对象
         Properties props = new Properties();
@@ -184,13 +221,13 @@ public class RegisterModelServiceImpl implements RegisterModelService {
         Session session = Session.getInstance(props, new Authenticator() {
             @Override
             protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication(captchaConfig.getUserName(), captchaConfig.getPassword());
+                return new PasswordAuthentication(captchaConfig.getUsername(), captchaConfig.getPassword());
             }
         });
         //创建一个代表邮件的对象Message
         Message message = new MimeMessage(session);
         try {
-            message.setFrom(new InternetAddress(captchaConfig.getUserName()));
+            message.setFrom(new InternetAddress(captchaConfig.getUsername()));
             //设置收件人
             message.addRecipient(Message.RecipientType.TO, new InternetAddress(email));
             //设置标题
@@ -200,13 +237,11 @@ public class RegisterModelServiceImpl implements RegisterModelService {
             //发送邮件
             Transport.send(message);
         } catch (MessagingException e) {
+            log.error(e.getMessage());
             e.printStackTrace();
         }
         //将验证码存入redis缓存
-
-
-
-        return null;
+        redisTemplate.boundHashOps("emailCaptcha").put(email, code);
     }
 
 
