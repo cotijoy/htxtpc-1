@@ -9,14 +9,14 @@ import com.aliyuncs.exceptions.ClientException;
 import com.aliyuncs.exceptions.ServerException;
 import com.aliyuncs.http.MethodType;
 import com.aliyuncs.profile.DefaultProfile;
-import com.magustek.com.htxtpc.register.bean.CaptchaConfig;
-import com.magustek.com.htxtpc.register.bean.RegisterModel;
+import com.magustek.com.htxtpc.register.bean.*;
 import com.magustek.com.htxtpc.register.dao.*;
 import com.magustek.com.htxtpc.register.service.RegisterModelService;
-import com.magustek.com.htxtpc.register.bean.PreRegisterHeader;
-import com.magustek.com.htxtpc.register.bean.PreRegisterLineitemDocument;
 import com.magustek.com.htxtpc.user.dao.CompanyDAO;
+import com.magustek.com.htxtpc.util.common.util.AESOperator;
 import com.magustek.com.htxtpc.util.common.util.CommonUtil;
+import com.magustek.com.htxtpc.util.common.util.ResultObject;
+import com.magustek.com.htxtpc.util.common.util.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -33,7 +33,7 @@ import java.util.Properties;
 import java.util.UUID;
 
 @Slf4j
-@Service("PlanHeaderService")
+@Service()
 public class RegisterModelServiceImpl implements RegisterModelService {
     private RegisterModelDAO registerModelDAO;
     private PreRegisterHeaderDAO preRegisterHeaderDAO;
@@ -57,35 +57,69 @@ public class RegisterModelServiceImpl implements RegisterModelService {
     }
 
     @Override
-    public Map<String, Object> register(RegisterModel registerModel) {
-        PreRegisterHeader preRegisterHeader = new PreRegisterHeader();
-        PreRegisterLineitemDocument preRegisterLineitemDocument = new PreRegisterLineitemDocument();
+    public Map<String, Object> register(RegisterModel registerModel) throws Exception{
         Map<String, Object> registResult = new HashMap<>();
-        String companyCode = companyDAO.findByCreditCode(registerModel.getCreditCode()).getCompanyCode();
-        BeanUtils.copyProperties(registerModel,preRegisterHeader);
-        preRegisterHeader.setCompanyCode(companyCode);
-        preRegisterHeaderDAO.save(preRegisterHeader);
+        String phoneNum = registerModel.getPhoneNum();
+        PreRegisterHeader preRegisterHeader = preRegisterHeaderDAO.findByPhoneNum(phoneNum);
+        RegisterHeader registerHeader = registerHeaderDAO.findByPhoneNum(phoneNum);
+        if (preRegisterHeader != null) {
+            registResult.put("status",ResultObject.accountStatus_2);
+        } else if (registerHeader != null ) {
+            registResult.put("status",ResultObject.accountStatus_3);
+        } else {
+            preRegisterHeader = new PreRegisterHeader();
+            String companyCode = companyDAO.findByCreditCode(registerModel.getCreditCode()).getCompanyCode();
+            registerModel.setPassword(AESOperator.encrypt(registerModel.getPassword()));  //对密码进行加密
+            BeanUtils.copyProperties(registerModel,preRegisterHeader);
+            preRegisterHeader.setCompanyCode(companyCode);
+            preRegisterHeaderDAO.save(preRegisterHeader);
 
-        try {
-            List<PreRegisterLineitemDocument> preRegisterLineitemDocumentLists = (List<PreRegisterLineitemDocument>)
-                    this.extractDocumentInfo(registerModel.
-                            getDocumentTypes(),registerModel.getDocumentNums(),registerModel.getDocuments()).
-                            get("preRegisterLineitemDocumentLists");
+            try {  //保存预注册的文件信息
+                List<PreRegisterLineitemDocument> preRegisterLineitemDocumentLists = (List<PreRegisterLineitemDocument>)
+                        this.extractDocumentInfo(registerModel.
+                                getDocumentTypes(),registerModel.getDocumentNums(),registerModel.getDocuments()).
+                                get("preRegisterLineitemDocumentLists");
 
-            for(PreRegisterLineitemDocument obj:preRegisterLineitemDocumentLists) {
-                obj.setCompanyCode(companyCode);
-                obj.setUsername(registerModel.getUsername());
-                obj.setDocumentSerialNum(CommonUtil.getUUID());
-                preRegisterLineitemDocumentDAO.save(obj);
+                for(PreRegisterLineitemDocument obj:preRegisterLineitemDocumentLists) {
+                    obj.setCompanyCode(companyCode);
+                    obj.setUsername(registerModel.getUsername());
+                    obj.setDocumentSerialNum(CommonUtil.getUUID());
+                    preRegisterLineitemDocumentDAO.save(obj);
+                }
+            } catch (Exception e) {
+                registResult.put("status",ResultObject.accountStatus_0);
+                log.info(registerModel.getUsername() + ":注册失败");
+                return registResult;
             }
-        } catch (Exception e) {
-            registResult.put("status",false);
-            log.info(registerModel.getUsername() + ":注册失败");
-            return registResult;
+            registResult.put("status",ResultObject.accountStatus_1);
         }
-        registResult.put("status",true);
+
         return registResult;
 
+    }
+
+
+    @Override
+    public Map<String, Object> userlogin(String username, String password) throws Exception {
+            Map<String, Object> registResult = new HashMap<>();
+            if ( !StringUtil.isEmpty(username) && !StringUtil.isEmpty(password)) {
+                password = AESOperator.encrypt(password);
+                RegisterHeader registerHeader = registerHeaderDAO.findByUsernameAndPassword(username,password);
+                if (registerHeader != null) {
+                    registResult.put("status",ResultObject.accountStatus_3);
+                    registResult.put("user", registerHeader);
+                } else {
+                    PreRegisterHeader preRegisterHeader = preRegisterHeaderDAO.findByUsernameAndPassword(username,password);
+                    if (preRegisterHeader != null) {
+                        registResult.put("status",ResultObject.accountStatus_2);
+                        registResult.put("user", preRegisterHeader);
+                    } else {
+                        registResult.put("user", null);
+                        return null;
+                    }
+                }
+            }
+        return registResult;
     }
 
     /**
