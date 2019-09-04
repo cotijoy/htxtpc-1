@@ -127,8 +127,12 @@ public class RegisterModelServiceImpl implements RegisterModelService {
         result.put("preRegisterLineitemDocumentLists",preRegisterLineitemDocumentLists);
         return result;
     }
+
     /**
      * 发送邮箱验证码并校验用户是否存在
+     * @param username
+     * @param email
+     * @return
      */
     @Override
     public String sendEmailCaptchaAndVerifyUser(String username, String email){
@@ -143,8 +147,12 @@ public class RegisterModelServiceImpl implements RegisterModelService {
         this.sendEmailCaptcha(email);
         return resp.setStateCode(BaseResponse.SUCCESS).setMsg("邮箱验证码发送成功").toJson();
     }
+
     /**
      * 校验验证码是否正确
+     * @param email
+     * @param captcha
+     * @return
      */
     @Override
     public String emailCaptchaVerify(String email, String captcha){
@@ -154,8 +162,11 @@ public class RegisterModelServiceImpl implements RegisterModelService {
         }
         return resp.setStateCode(BaseResponse.ERROR).setMsg("验证码错误").toJson();
     }
+
     /**
      * 更新用户密码
+     * @param username
+     * @param password
      */
     @Override
     public void updatePassword(String username, String password){
@@ -163,10 +174,10 @@ public class RegisterModelServiceImpl implements RegisterModelService {
         header.setPassword(password);
         registerHeaderDAO.save(header);
     }
+
     /**
      * 发送短信验证码
      * @param phoneNum
-     * @return
      */
     private void sendPhoneCaptcha(String phoneNum) {
         // 创建DefaultAcsClient实例并初始化
@@ -209,7 +220,6 @@ public class RegisterModelServiceImpl implements RegisterModelService {
     /**
      * 发送邮箱验证码
      * @param email
-     * @return
      */
     private void sendEmailCaptcha(String email){
         String code = UUID.randomUUID().toString().substring(0,4);
