@@ -12,13 +12,17 @@ import com.aliyuncs.profile.DefaultProfile;
 import com.magustek.com.htxtpc.register.bean.*;
 import com.magustek.com.htxtpc.register.dao.*;
 import com.magustek.com.htxtpc.register.service.RegisterModelService;
+import com.magustek.com.htxtpc.user.bean.Company;
+import com.magustek.com.htxtpc.user.bean.User;
 import com.magustek.com.htxtpc.user.dao.CompanyDAO;
+import com.magustek.com.htxtpc.user.dao.UserDAO;
 import com.magustek.com.htxtpc.util.common.util.AESOperator;
 import com.magustek.com.htxtpc.util.common.util.CommonUtil;
 import com.magustek.com.htxtpc.util.common.util.ResultObject;
 import com.magustek.com.htxtpc.util.common.util.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -29,6 +33,7 @@ import java.util.Map;
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import javax.transaction.Transactional;
 import java.util.Properties;
 import java.util.UUID;
 
@@ -41,39 +46,66 @@ public class RegisterModelServiceImpl implements RegisterModelService {
     private RegisterHeaderDAO registerHeaderDAO;
     private RegisterLineitemDocumentDAO registerLineitemDocumentDAO;
     private CompanyDAO companyDAO;
+    private UserDAO userDAO;
 
     public RegisterModelServiceImpl(RegisterModelDAO registerModelDAO,
                                     PreRegisterHeaderDAO preRegisterHeaderDAO,
                                     PreRegisterLineitemDocumentDAO preRegisterLineitemDocumentDAO,
                                     RegisterHeaderDAO registerHeaderDAO,
                                     RegisterLineitemDocumentDAO registerLineitemDocumentDAO,
-                                    CompanyDAO companyDAO) {
+                                    CompanyDAO companyDAO, UserDAO userDAO) {
         this.registerModelDAO = registerModelDAO;
         this.preRegisterHeaderDAO = preRegisterHeaderDAO;
         this.preRegisterLineitemDocumentDAO = preRegisterLineitemDocumentDAO;
         this.registerHeaderDAO = registerHeaderDAO;
         this.registerLineitemDocumentDAO = registerLineitemDocumentDAO;
         this.companyDAO = companyDAO;
+        this.userDAO = userDAO;
     }
 
+    /**
+     * 验证该用户名是否可以被注册
+     */
+    @Override
+    public Map<String, Object> usernameCheck(String username) throws Exception {
+        Map<String, Object> registResult = new HashMap<>();
+        PreRegisterHeader preRegisterHeader = preRegisterHeaderDAO.findByUsername(username.trim());
+        /*RegisterHeader registerHeader = registerHeaderDAO.findByUsername(username);*/
+        if (preRegisterHeader != null) {
+            registResult.put("status","该用户名已经被注册");
+            return registResult;
+        }
+        return null;
+    }
+
+
+    /**
+     * 用户注册
+     */
+    @Transactional
     @Override
     public Map<String, Object> register(RegisterModel registerModel) throws Exception{
         Map<String, Object> registResult = new HashMap<>();
         String phoneNum = registerModel.getPhoneNum();
         PreRegisterHeader preRegisterHeader = preRegisterHeaderDAO.findByPhoneNum(phoneNum);
         RegisterHeader registerHeader = registerHeaderDAO.findByPhoneNum(phoneNum);
-        if (preRegisterHeader != null) {
-            registResult.put("status",ResultObject.accountStatus_2);
-        } else if (registerHeader != null ) {
-            registResult.put("status",ResultObject.accountStatus_3);
-        } else {
+        if (registerHeader != null) {  //审核通过的正式用户
+            registResult.put("accountStatus",ResultObject.accountStatus_3);
+        } else if (preRegisterHeader != null ) {  //待审核用户
+            registResult.put("accountStatus",ResultObject.accountStatus_2);
+        } else {    //当前正在注册的用户
             preRegisterHeader = new PreRegisterHeader();
-            String companyCode = companyDAO.findByCreditCode(registerModel.getCreditCode()).getCompanyCode();
+            Long companyCode = companyDAO.findByCreditCode(registerModel.getCreditCode()).getCompanyCode();
             registerModel.setPassword(AESOperator.encrypt(registerModel.getPassword()));  //对密码进行加密
             BeanUtils.copyProperties(registerModel,preRegisterHeader);
             preRegisterHeader.setCompanyCode(companyCode);
             preRegisterHeaderDAO.save(preRegisterHeader);
-
+            User user = new User();
+            BeanUtils.copyProperties(preRegisterHeader,user);
+            user.setUserCellphone(preRegisterHeader.getPhoneNum());
+            user.setUserTelphone(preRegisterHeader.getTelphone());
+            user.setUserEmail(preRegisterHeader.getEmail());
+            userDAO.save(user);
             try {  //保存预注册的文件信息
                 List<PreRegisterLineitemDocument> preRegisterLineitemDocumentLists = (List<PreRegisterLineitemDocument>)
                         this.extractDocumentInfo(registerModel.
@@ -87,11 +119,11 @@ public class RegisterModelServiceImpl implements RegisterModelService {
                     preRegisterLineitemDocumentDAO.save(obj);
                 }
             } catch (Exception e) {
-                registResult.put("status",ResultObject.accountStatus_0);
+                registResult.put("accountStatus",ResultObject.accountStatus_0);
                 log.info(registerModel.getUsername() + ":注册失败");
                 return registResult;
             }
-            registResult.put("status",ResultObject.accountStatus_1);
+            registResult.put("accountStatus",ResultObject.accountStatus_1);
         }
 
         return registResult;
@@ -99,19 +131,24 @@ public class RegisterModelServiceImpl implements RegisterModelService {
     }
 
 
+
+
+    /**
+     * 用户登录
+     */
     @Override
     public Map<String, Object> userlogin(String username, String password) throws Exception {
             Map<String, Object> registResult = new HashMap<>();
             if ( !StringUtil.isEmpty(username) && !StringUtil.isEmpty(password)) {
-                password = AESOperator.encrypt(password);
+                password = AESOperator.encrypt(password);  //对输入的密码进行加密，再查找
                 RegisterHeader registerHeader = registerHeaderDAO.findByUsernameAndPassword(username,password);
                 if (registerHeader != null) {
-                    registResult.put("status",ResultObject.accountStatus_3);
+                    registResult.put("accountStatus",ResultObject.accountStatus_3);
                     registResult.put("user", registerHeader);
                 } else {
                     PreRegisterHeader preRegisterHeader = preRegisterHeaderDAO.findByUsernameAndPassword(username,password);
                     if (preRegisterHeader != null) {
-                        registResult.put("status",ResultObject.accountStatus_2);
+                        registResult.put("accountStatus",ResultObject.accountStatus_2);
                         registResult.put("user", preRegisterHeader);
                     } else {
                         registResult.put("user", null);
@@ -153,6 +190,30 @@ public class RegisterModelServiceImpl implements RegisterModelService {
         }
         result.put("preRegisterLineitemDocumentLists",preRegisterLineitemDocumentLists);
         return result;
+    }
+
+    /**
+     * 用户查询注册情况
+     */
+    @Override
+    public Map<String, Object> findRegisterModel(String username, String password) throws Exception {
+        password = AESOperator.encrypt(password);  //对输入的密码进行加密
+        Map<String, Object> registResult = new HashMap<>();
+        // RegisterModel registerModel = new RegisterModel();  有问题
+        RegisterHeader registerHeader = registerHeaderDAO.findByUsernameAndPassword(username,password);
+        if (registerHeader == null) {
+            PreRegisterHeader preRegisterHeader = preRegisterHeaderDAO.findByUsernameAndPassword(username,password);
+        } else {
+            Long companyCode = registerHeader.getCompanyCode();
+            Company company = companyDAO.findByCompanyCode(companyCode);
+            List<RegisterLineitemDocument> registerLineitemDocument = registerLineitemDocumentDAO.
+                    findByCompanyCodeAndUsername(companyCode,username);
+            //BeanUtils.copyProperties(); //未完待续
+        }
+
+
+
+        return null;
     }
 
     /**
