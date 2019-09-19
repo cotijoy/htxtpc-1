@@ -7,6 +7,7 @@ import com.magustek.com.htxtpc.util.base.BaseResponse;
 import com.magustek.com.htxtpc.util.common.util.ResultObject;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -33,6 +34,7 @@ public class RegisterController {
     @Autowired
     private RegisterModelServiceImpl registerModelService;
 
+    @ApiOperation(value="用户注册", notes = "参数：HttpServletRequest, RegisterModel")
     @RequestMapping(value = "/register.do")
     public Map<String, Object> register (HttpServletRequest request, RegisterModel registerModel) throws Exception {
         CommonsMultipartResolver commonsMultipartResolver = new CommonsMultipartResolver
@@ -49,6 +51,15 @@ public class RegisterController {
         return result;
     }
 
+    @ApiOperation(value="用户注册时用户名检测唯一性", notes = "参数：username")
+    @RequestMapping(value = "/usernameCheck.do")
+    public Map<String, Object> usernameCheck (String username) throws Exception {
+        Map<String, Object> registResult = new HashMap<>();
+        registResult = registerModelService.usernameCheck(username);
+        return registResult;
+    }
+
+    @ApiOperation(value="用户登录", notes = "参数：HttpServletRequest, HttpServletResponse, username, password")
     @RequestMapping(value = "/userLogin.do")
     public Map<String, Object> login (HttpServletRequest request, HttpServletResponse response, String username, String password) throws Exception {
         HttpSession session = request.getSession();
@@ -58,13 +69,17 @@ public class RegisterController {
             if (registResult.get("user") == null) {
                 request.getRequestDispatcher("").forward(request, response);  //跳转到注册页面 具体路径未知
             } else {
-                Integer status = (Integer) registResult.get("status");
-                /*if (status == ResultObject.)) {
+                /*Integer status = (Integer) registResult.get("status");
+                if (status == ResultObject.accountStatus_2) {
+                   涉及权限
+                } else {
 
                 }*/
+                session.setAttribute("user",registResult.get("user"));
+                return registResult;
             }
         }
-
+        return null;
     }
 
 }
