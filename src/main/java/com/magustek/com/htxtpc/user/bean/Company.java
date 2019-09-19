@@ -9,11 +9,12 @@ import javax.persistence.Entity;
 
 
 import javax.persistence.Column;
+import java.io.Serializable;
 
 @ApiModel(value = "Company-企业表")
 @Data
 @Entity
-public class Company extends BaseEntity {
+public class Company extends BaseEntity implements Serializable {
     @ApiModelProperty(value = "企业编码")
     @Column(nullable = false) private String companyCode;
     @ApiModelProperty(value = "企业名称")

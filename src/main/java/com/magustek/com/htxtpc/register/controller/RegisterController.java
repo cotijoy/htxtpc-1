@@ -72,7 +72,7 @@ public class RegisterController {
                 }*/
             }
         }
-
+            return null;
     }
     /**
      * 发送邮箱验证码并校验用户是否存在
