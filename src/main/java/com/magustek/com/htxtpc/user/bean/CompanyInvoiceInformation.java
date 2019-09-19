@@ -18,7 +18,7 @@ import javax.persistence.Entity;
 @Getter
 public class CompanyInvoiceInformation extends BaseEntity {
     @ApiModelProperty(value="企业编码")
-    @Column(nullable = false) private String companyCode;
+    @Column(nullable = false) private Long companyCode;
     @ApiModelProperty(value="企业名称")
     @Column(nullable = false) private String companyName;
     @ApiModelProperty(value="统一信用代码")

@@ -17,7 +17,7 @@ import javax.persistence.Entity;
 @NoArgsConstructor
 public class PreRegisterHeader extends BaseEntity {
     @ApiModelProperty(value = "企业编码")
-    @Column(nullable = false) private String companyCode;
+    @Column(nullable = false) private Long companyCode;
     @ApiModelProperty(value = "用户名")
     @Column(nullable = false) private String username;
     @ApiModelProperty(value = "管理员标识")

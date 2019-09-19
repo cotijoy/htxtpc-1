@@ -13,7 +13,7 @@ import javax.persistence.Entity;
 @Entity
 public class Position extends BaseEntity {
     @ApiModelProperty(value = "企业编码")
-    @Column(nullable = false) private String companyCode;
+    @Column(nullable = false) private Long companyCode;
     @ApiModelProperty(value = "部门编码")
     @Column(nullable = false) private String departmentCode;
     @ApiModelProperty(value = "岗位编码")

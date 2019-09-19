@@ -13,7 +13,7 @@ import javax.persistence.Entity;
 @Entity
 public class User extends BaseEntity {
     @ApiModelProperty(value = "企业编码")
-    @Column(nullable = false) private String companyCode;
+    @Column(nullable = false) private Long companyCode;
     @ApiModelProperty(value = "部门编码")
     @Column(nullable = false) private String departmentCode;
     @ApiModelProperty(value = "岗位编码")
@@ -32,4 +32,7 @@ public class User extends BaseEntity {
     @Column() private String userCellphone;
     @ApiModelProperty(value = "邮箱地址")
     @Column() private String userEmail;
+    @ApiModelProperty(value = "用户状态")
+    @Column() private String accountStatus;         //审核通过，正式用户：X
+
 }

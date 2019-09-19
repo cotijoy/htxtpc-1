@@ -18,7 +18,7 @@ import javax.persistence.Entity;
 @Setter
 public class RegisterLineitemAudit extends BaseEntity {
     @ApiModelProperty(value = "企业编码")
-    @Column(nullable = false) private String companyCode;
+    @Column(nullable = false) private Long companyCode;
     @ApiModelProperty(value = "用户名")
     @Column(nullable = false) private String username;
     @ApiModelProperty(value = "审核流水号")
@@ -28,7 +28,7 @@ public class RegisterLineitemAudit extends BaseEntity {
     @ApiModelProperty(value = "审核意见")
     @Column() private String auditAdvice;
     @ApiModelProperty(value = "审核人企业编码")
-    @Column() private String auditorCompanyCode;
+    @Column() private Long auditorCompanyCode;
     @ApiModelProperty(value = "审核人")
     @Column() private String auditor;
     @ApiModelProperty(value = "审核日期（yyyy-MM-dd）")

@@ -5,4 +5,5 @@ import org.springframework.data.repository.CrudRepository;
 
 public interface CompanyDAO extends CrudRepository<Company,Long> {
     Company findByCreditCode(String creditCode);
+    Company findByCompanyCode(Long companyCode);
 }
