@@ -24,7 +24,7 @@ public class CaptchaConfig {
     @ApiModelProperty(value = "邮箱服务器")
     private String mailHost;
     @ApiModelProperty(value = "邮箱用户名")
-    private String userName;
+    private String username;
     @ApiModelProperty(value = "邮箱授权码")
     private String password;
 }

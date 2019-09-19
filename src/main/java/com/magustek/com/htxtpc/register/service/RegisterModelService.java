@@ -8,8 +8,9 @@ import java.util.Map;
 public interface RegisterModelService {
 
     Map<String,Object> register(RegisterModel registerModel) throws Exception ;
-    Map<String,Object> sendPhoneCaptcha(CaptchaConfig captchaConfig, String phoneNum);
-    Map<String,Object> sendEmailCaptcha(CaptchaConfig captchaConfig, String email);
+    String sendEmailCaptchaAndVerifyUser(String userName, String email);
+    String emailCaptchaVerify(String email, String captcha);
+    void updatePassword(String username, String email, String password);
     Map<String,Object> userlogin(String username, String password) throws Exception;
     Map<String,Object> usernameCheck(String username) throws Exception;
     Map<String,Object> findRegisterModel(String username, String password) throws Exception;
