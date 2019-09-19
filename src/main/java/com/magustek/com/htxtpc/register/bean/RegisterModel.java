@@ -15,7 +15,8 @@ public class RegisterModel {
     private String companyAddress;                              //企业地址
     private String organizationType;                            //组织类型
     private String legalPerson;                                 //企业法定代表人
-    private String username;                                    //用户名
+    private String username;                                    //用户名 (具有唯一性)
+    private String userFullName;                                //用户全名
     private String telphoneAreaCode;                            //电话号码区号
     private String telphone;                                    //电话号码
     private String telphoneExtensionNum;                        //电话号码分机号
