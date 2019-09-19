@@ -5,17 +5,24 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.persistence.Entity;
-
-
-import javax.persistence.Column;
+import javax.persistence.*;
 
 @ApiModel(value = "Company-企业表")
 @Data
 @Entity
-public class Company extends BaseEntity {
+public class Company {
+    @TableGenerator(
+            name = "companyCode_generator",
+            table = "jpa_companycode_generator",
+            pkColumnName = "pk_name",
+            pkColumnValue = "company_code",
+            valueColumnName = "pk_value",
+            initialValue = 600001,
+            allocationSize = 1)
+
     @ApiModelProperty(value = "企业编码")
-    @Column(nullable = false) private String companyCode;
+    @GeneratedValue(generator = "companyCode_generator")
+    @Column(nullable = false) @Id Long companyCode;
     @ApiModelProperty(value = "企业名称")
     @Column(nullable = false) private String companyName;
     @ApiModelProperty(value = "企业全称")
