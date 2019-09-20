@@ -89,26 +89,13 @@ public class SystemManageController {
     }
 
     /**
-     * 新增企业发票信息
-     */
-    @ApiOperation(value="新增企业发票信息", notes = "参数：companyInvoiceInformation")
-    @RequestMapping(value = "/addCompanyInvoiceInformation.do")
-    public String addCompanyInvoiceInformation(@RequestBody CompanyInvoiceInformation companyInvoiceInformation){
-        try {
-            systemManageService.addCompanyInvoiceInformation(companyInvoiceInformation);
-            return resp.setStateCode(BaseResponse.SUCCESS).toJson();
-        }catch (Exception e){
-            return resp.setStateCode(BaseResponse.ERROR).setMsg(e.getMessage()).toJson();
-        }
-    }
-    /**
-     * 修改企业发票信息
+     * 新增或修改企业发票信息
      */
     @ApiOperation(value="修改企业发票信息", notes = "参数：CompanyInvoiceInformation")
-    @RequestMapping(value = "/addCompanyInvoiceInformation.do")
-    public String updateCompanyInvoiceInformation(@RequestBody CompanyInvoiceInformation companyInvoiceInformation){
+    @RequestMapping(value = "/updateCompanyInvoiceInformation.do")
+    public String addOrUpdateCompanyInvoiceInformation(@RequestBody CompanyInvoiceInformation companyInvoiceInformation){
         try {
-            systemManageService.updateCompanyInvoiceInformation(companyInvoiceInformation);
+            systemManageService.addOrUpdateCompanyInvoiceInformation(companyInvoiceInformation);
             return resp.setStateCode(BaseResponse.SUCCESS).toJson();
         }catch (Exception e){
             return resp.setStateCode(BaseResponse.ERROR).setMsg(e.getMessage()).toJson();
@@ -117,7 +104,7 @@ public class SystemManageController {
     /**
      * 删除企业发票信息
      */
-    @ApiOperation(value="删除企业发票信息", notes = "参数：CompanyInvoiceInformation ")
+    @ApiOperation(value="删除企业发票信息", notes = "参数：主键 id ")
     @RequestMapping(value = "/deleteCompanyInvoiceInformation.do")
     public String deleteCompanyInvoiceInformation(@RequestBody CompanyInvoiceInformation companyInvoiceInformation){
         try {
@@ -130,10 +117,16 @@ public class SystemManageController {
     /**
      * 查询企业发票信息
      */
-    @ApiOperation(value="查询企业发票信息", notes = "参数：companyName Or accountName")
+    @ApiOperation(value="查询企业发票信息", notes = "参数：")
     @RequestMapping(value = "/selectCompanyInvoiceInformation.do")
-    public String selectCompanyInvoiceInformation(String companyNameOrAccountName){
-       return null;
+    public String selectCompanyInvoiceInformation(HttpSession httpSession, @RequestParam String companyNameOrAccountName, @RequestBody BasePage basePage){
+        try {
+            UserInfo user = (UserInfo)httpSession.getAttribute("userInfo");
+            Page<CompanyInvoiceInformation> list = systemManageService.findAllByCompanyNameOrAccountName(companyNameOrAccountName, user.getCompanyModel().getCompanyCode(), basePage.getPageRequest());
+            return resp.setStateCode(BaseResponse.SUCCESS).setData(list).toJson();
+        }catch (Exception e){
+            return resp.setStateCode(BaseResponse.ERROR).setMsg(e.getMessage()).toJson();
+        }
     }
 
 }

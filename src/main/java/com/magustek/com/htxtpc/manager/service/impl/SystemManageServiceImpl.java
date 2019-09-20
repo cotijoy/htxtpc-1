@@ -12,7 +12,7 @@ import org.springframework.data.domain.Pageable;
 
 import java.util.Map;
 
-@Service
+@Service("SystemManageServiceImpl")
 public class SystemManageServiceImpl implements SystemManageService {
 
     private UserDao userDao;
@@ -65,20 +65,11 @@ public class SystemManageServiceImpl implements SystemManageService {
     }
 
     /**
-     * 新增发票信息
+     * 新增或修改发票信息
      * @param companyInvoiceInformation
      */
     @Override
-    public void addCompanyInvoiceInformation(CompanyInvoiceInformation companyInvoiceInformation) {
-        companyInvoiceInformationDao.save(companyInvoiceInformation);
-    }
-
-    /**
-     * 修改发票信息
-     * @param companyInvoiceInformation
-     */
-    @Override
-    public void updateCompanyInvoiceInformation(CompanyInvoiceInformation companyInvoiceInformation) {
+    public void addOrUpdateCompanyInvoiceInformation(CompanyInvoiceInformation companyInvoiceInformation) {
         companyInvoiceInformationDao.save(companyInvoiceInformation);
     }
 
@@ -87,7 +78,18 @@ public class SystemManageServiceImpl implements SystemManageService {
      */
     @Override
     public void deleteCompanyInvoiceInformation(CompanyInvoiceInformation companyInvoiceInformation) {
-        companyInvoiceInformationDao.delete(companyInvoiceInformation);
+        companyInvoiceInformationDao.deleteById(companyInvoiceInformation.getId());
 }
+
+    /**
+     * 查询企业发票信息
+     * @param companyNameOrAccountName
+     * @param pageable
+     * @return
+     */
+    @Override
+    public Page<CompanyInvoiceInformation> findAllByCompanyNameOrAccountName(String companyNameOrAccountName, String companyCode, Pageable pageable) {
+        return companyInvoiceInformationDao.findAllByCompanyNameOrAccountName(companyNameOrAccountName, companyCode, pageable);
+    }
 
 }
