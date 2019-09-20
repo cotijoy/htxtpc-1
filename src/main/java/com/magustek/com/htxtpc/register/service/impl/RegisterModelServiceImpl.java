@@ -40,7 +40,7 @@ import java.util.Properties;
 import java.util.UUID;
 
 @Slf4j
-@Service()
+@Service("RegisterModelServiceImpl")
 public class RegisterModelServiceImpl implements RegisterModelService {
     private RegisterModelDAO registerModelDAO;
     private PreRegisterHeaderDAO preRegisterHeaderDAO;

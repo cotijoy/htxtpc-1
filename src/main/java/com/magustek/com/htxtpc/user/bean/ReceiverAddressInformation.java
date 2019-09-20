@@ -21,12 +21,20 @@ public class ReceiverAddressInformation extends BaseEntity {
     @Column(nullable = false) private String userCode;
     @ApiModelProperty(value="国家")
     @Column() private String nation;
+    @ApiModelProperty(value="国家编码")
+    @Column() private String nationCode;
     @ApiModelProperty(value="省")
     @Column() private String province;
+    @ApiModelProperty(value="省编码")
+    @Column() private String provinceCode;
     @ApiModelProperty(value="市")
     @Column() private String city;
+    @ApiModelProperty(value="市编码")
+    @Column() private String cityCode;
     @ApiModelProperty(value="区")
     @Column() private String district;
+    @ApiModelProperty(value="区编码")
+    @Column() private String districtCode;
     @ApiModelProperty(value="详细地址")
     @Column() private String receiverAddress;
     @ApiModelProperty(value="收货人")
