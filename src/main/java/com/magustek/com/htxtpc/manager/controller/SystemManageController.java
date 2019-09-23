@@ -220,7 +220,7 @@ public class SystemManageController {
      * @param vo
      * @return
      */
-    @ApiOperation(value="查询企业发票信息", notes = "参数：searchStr、page、size")
+    @ApiOperation(value="查询收件地址", notes = "ReceiverAddressInformationVO")
     @RequestMapping(value = "/selectReceiverAddressInformation")
     public String selectReceiverAddressInformation(HttpServletRequest request, @RequestBody ReceiverAddressInformationVO vo){
         HttpSession session = request.getSession();
