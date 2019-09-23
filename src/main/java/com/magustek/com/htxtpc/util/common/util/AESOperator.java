@@ -21,7 +21,7 @@ public class AESOperator {
 
     /**
      * 加密
-     * @return String 加密后的字符串
+     * @return String 加密
      */
     public static String encrypt (String str) throws Exception {
         Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
@@ -35,7 +35,7 @@ public class AESOperator {
 
     /**
      * 解密
-     * @return String 解密后的字符串
+     * @return String 解密
      */
     public static String  decrypt (String str) throws Exception {
         byte[] raw = sKey.getBytes("ASCII");
