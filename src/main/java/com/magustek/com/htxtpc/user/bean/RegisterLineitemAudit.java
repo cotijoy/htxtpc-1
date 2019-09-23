@@ -6,8 +6,8 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
+import javax.persistence.*;
+import java.io.Serializable;
 
 /**
  * 用户(预)注册行项目-审核
@@ -16,7 +16,7 @@ import javax.persistence.Entity;
 @Entity
 @Getter
 @Setter
-public class RegisterLineitemAudit extends BaseEntity {
+public class RegisterLineitemAudit extends BaseEntity implements Serializable {
     @ApiModelProperty(value = "企业编码")
     @Column(nullable = false) private Long companyCode;
     @ApiModelProperty(value = "用户名")
@@ -35,4 +35,12 @@ public class RegisterLineitemAudit extends BaseEntity {
     @Column() private String auditDate;
     @ApiModelProperty(value = "审核时间（HH:mm:ss ）")
     @Column() private String auditTime;
+
+    @OneToOne(fetch= FetchType.LAZY,cascade = CascadeType.ALL)
+    @JoinColumn(name = "auditorCompanyCode",referencedColumnName = "companyCode",insertable = false,updatable = false)
+    private Company auditorCompany;
+
+    @OneToOne(fetch=FetchType.LAZY,cascade = CascadeType.ALL)
+    @JoinColumn(name = "companyCode",referencedColumnName = "companyCode",insertable = false,updatable = false)
+    private Company userCompany;
 }
