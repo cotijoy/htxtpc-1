@@ -42,7 +42,7 @@ public class RegisterController {
     }
 
     @ApiOperation(value="用户注册", notes = "参数：HttpServletRequest, RegisterModel")
-    @RequestMapping(value = "/register.do")
+    @RequestMapping(value = "/register")
     public Map<String, Object> register (HttpServletRequest request, RegisterModel registerModel) throws Exception {
         CommonsMultipartResolver commonsMultipartResolver = new CommonsMultipartResolver
                 (request.getSession().getServletContext());
@@ -59,7 +59,7 @@ public class RegisterController {
     }
 
     @ApiOperation(value="用户注册时用户名检测唯一性", notes = "参数：username")
-    @RequestMapping(value = "/usernameCheck.do")
+    @RequestMapping(value = "/usernameCheck")
     public Map<String, Object> usernameCheck (String username) throws Exception {
         Map<String, Object> registResult = new HashMap<>();
         registResult = registerModelService.usernameCheck(username);
@@ -67,7 +67,7 @@ public class RegisterController {
     }
 
     @ApiOperation(value="用户登录", notes = "参数：HttpServletRequest, HttpServletResponse, username, password")
-    @RequestMapping(value = "/userLogin.do")
+    @RequestMapping(value = "/userLogin")
     public Map<String, Object> login (HttpServletRequest request, HttpServletResponse response, String username, String password) throws Exception {
         HttpSession session = request.getSession();
         Map<String, Object> registResult = new HashMap<>();
