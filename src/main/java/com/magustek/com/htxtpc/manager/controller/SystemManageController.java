@@ -1,11 +1,15 @@
 package com.magustek.com.htxtpc.manager.controller;
 
 import com.magustek.com.htxtpc.manager.bean.CompanyInvoiceInformationVO;
+import com.magustek.com.htxtpc.manager.bean.ReceiverAddressInformationVO;
 import com.magustek.com.htxtpc.manager.bean.UserVO;
 import com.magustek.com.htxtpc.manager.service.CompanyInvoiceInformationService;
+import com.magustek.com.htxtpc.manager.service.ReceiverAddressInformationService;
 import com.magustek.com.htxtpc.user.bean.CompanyInvoiceInformation;
+import com.magustek.com.htxtpc.user.bean.ReceiverAddressInformation;
 import com.magustek.com.htxtpc.user.bean.User;
 import com.magustek.com.htxtpc.manager.service.RegisterLineitemAuditService;
+import com.magustek.com.htxtpc.util.base.BaseEntity;
 import com.magustek.com.htxtpc.util.base.BaseResponse;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -15,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.Map;
 
@@ -25,6 +30,7 @@ import java.util.Map;
 public class SystemManageController {
     private RegisterLineitemAuditService registerLineitemAuditService;
     private CompanyInvoiceInformationService companyInvoiceInformationService;
+    private ReceiverAddressInformationService receiverAddressInformationService;
     private BaseResponse resp;
 
     public SystemManageController(RegisterLineitemAuditService registerLineitemAuditService,
@@ -171,5 +177,59 @@ public class SystemManageController {
             }
         }
     }
+
+    /**
+     * 新增或修改收件地址
+     * @param receiverAddressInformation
+     * @return
+     */
+    @ApiOperation(value="新增或修改收件地址", notes = "参数：ReceiverAddressInformation")
+    @RequestMapping(value = "/addOrUpdateReceiverAddressInformation")
+    public String addOrUpdateReceiverAddressInformation(@RequestBody ReceiverAddressInformation receiverAddressInformation, HttpServletRequest request){
+        HttpSession session = request.getSession();
+        User user = (User)session.getAttribute("user");
+        try {
+            receiverAddressInformation = receiverAddressInformationService.addOrUpdateReceiverAddressInformation(receiverAddressInformation, user.getUsername());
+            return resp.setStateCode(BaseResponse.SUCCESS).setData(receiverAddressInformation).setMsg("成功").toJson();
+        }catch (Exception e){
+            return resp.setStateCode(BaseResponse.ERROR).setMsg("失败，原因是:"+e.getMessage()).toJson();
+        }
+    }
+
+    /**
+     * 删除收件地址
+     * @param receiverAddressInformation
+     * @return
+     */
+    @ApiOperation(value="删除收件地址", notes = "receiverAddressInformation")
+    @RequestMapping(value = "/deleteReceiverAddressInformation")
+    public String deleteReceiverAddressInformation(@RequestBody ReceiverAddressInformation receiverAddressInformation){
+        try {
+            receiverAddressInformationService.deleteReceiverAddressInformation(receiverAddressInformation);
+            return resp.setStateCode(BaseResponse.SUCCESS).setMsg("删除成功").toJson();
+        }catch (Exception e){
+            return resp.setStateCode(BaseResponse.ERROR).setMsg("删除失败"+e.getMessage()).toJson();
+        }
+    }
+
+    /**
+     * 查询收件地址
+     * @param vo
+     * @return
+     */
+    @ApiOperation(value="查询企业发票信息", notes = "参数：searchStr、page、size")
+    @RequestMapping(value = "/selectReceiverAddressInformation")
+    public String selectReceiverAddressInformation(HttpServletRequest request, @RequestBody ReceiverAddressInformationVO vo){
+        HttpSession session = request.getSession();
+        User user = (User)session.getAttribute("user");
+        try {
+            Page<ReceiverAddressInformation> page = receiverAddressInformationService.searchReceiverAddressInformationBysearchingContent(vo, user.getUsername());
+            return resp.setStateCode(BaseResponse.SUCCESS).setData(page).setMsg("查询成功").toJson();
+        } catch (Exception e) {
+            return resp.setStateCode(BaseResponse.ERROR).setMsg("查询失败").toJson();
+        }
+    }
+
+
 
 }
