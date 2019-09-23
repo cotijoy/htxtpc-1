@@ -3,8 +3,7 @@ package com.magustek.com.htxtpc.register.bean;
 import com.magustek.com.htxtpc.util.base.BaseEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.*;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,7 +11,10 @@ import javax.persistence.Entity;
 @ApiModel(value = "RegisterHeader-用户注册抬头")
 @Data
 @Entity
+@Getter
+@Setter
 @AllArgsConstructor
+@NoArgsConstructor
 public class RegisterHeader extends BaseEntity {
     @ApiModelProperty(value = "企业编码")
     @Column(nullable = false) private Long companyCode;
@@ -36,4 +38,5 @@ public class RegisterHeader extends BaseEntity {
     @Column(nullable = false) private String password;
     @ApiModelProperty(value = "主营业务")
     @Column(nullable = false) private String mainBusiness;
+
 }

@@ -230,23 +230,23 @@ public class RegisterModelServiceImpl implements RegisterModelService {
      * 发送邮箱验证码并校验用户是否存在
      */
     @Override
-    public String sendEmailCaptchaAndVerifyUser(String username, String email){
-        if(!email.matches("^\\w+@(\\w+\\.)+\\w+$")){
+    public String sendEmailCaptchaAndVerifyUser(RegisterHeader registerHeader){
+        if(!registerHeader.getEmail().matches("^\\w+@(\\w+\\.)+\\w+$")){
             return resp.setStateCode(BaseResponse.ERROR).setMsg("邮箱格式不正确").toJson();
         }
-        if (registerHeaderDAO.findByUsernameAndEmail(username, email)==null){
+        if (registerHeaderDAO.findByUsernameAndEmail(registerHeader.getUsername(), registerHeader.getEmail())==null){
             return resp.setStateCode(BaseResponse.ERROR).setMsg("用户不存在").toJson();
         }
-        this.sendEmailCaptcha(email);
+        this.sendEmailCaptcha(registerHeader.getEmail());
         return resp.setStateCode(BaseResponse.SUCCESS).setMsg("邮箱验证码发送成功").toJson();
     }
     /**
      * 校验验证码是否正确
      */
     @Override
-    public String emailCaptchaVerify(String email, String captcha){
-        if (captcha.equals(redisTemplate.boundHashOps("emailCaptcha").get(email))){
-            redisTemplate.boundHashOps("emailCaptcha").delete(email);
+    public String emailCaptchaVerify(RegisterHeaderVO vo){
+        if (vo.getCaptcha().equals(redisTemplate.boundHashOps("emailCaptcha").get(vo.getEmail()))){
+            redisTemplate.boundHashOps("emailCaptcha").delete(vo.getEmail());
             return resp.setStateCode(BaseResponse.SUCCESS).setMsg("验证码正确").toJson();
         }
         return resp.setStateCode(BaseResponse.ERROR).setMsg("验证码错误").toJson();
@@ -255,9 +255,9 @@ public class RegisterModelServiceImpl implements RegisterModelService {
      * 更新用户密码
      */
     @Override
-    public void updatePassword(String username, String email,String password){
-        RegisterHeader header = registerHeaderDAO.findByUsernameAndEmail(username,email);
-        header.setPassword(password);
+    public void updatePassword(RegisterHeader registerHeader){
+        RegisterHeader header = registerHeaderDAO.findByUsernameAndEmail(registerHeader.getUsername(), registerHeader.getEmail());
+        header.setPassword(registerHeader.getPassword());
         registerHeaderDAO.save(header);
     }
     /**

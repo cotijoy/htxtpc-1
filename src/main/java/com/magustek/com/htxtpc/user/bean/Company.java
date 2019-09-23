@@ -6,11 +6,12 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @ApiModel(value = "Company-企业表")
 @Data
 @Entity
-public class Company {
+public class Company implements Serializable {
     @TableGenerator(
             name = "companyCode_generator",
             table = "jpa_companycode_generator",
