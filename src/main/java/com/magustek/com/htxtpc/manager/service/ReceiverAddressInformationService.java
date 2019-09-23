@@ -9,5 +9,5 @@ import java.util.List;
 public interface ReceiverAddressInformationService {
     ReceiverAddressInformation addOrUpdateReceiverAddressInformation (ReceiverAddressInformation receiverAddressInformation, String username);
     void deleteReceiverAddressInformation (ReceiverAddressInformation receiverAddressInformation);
-    Page<ReceiverAddressInformation> searchReceiverAddressInformation (ReceiverAddressInformationVO receiverAddressInformationVO);
+    Page<ReceiverAddressInformation> searchReceiverAddressInformationBysearchingContent (ReceiverAddressInformationVO receiverAddressInformationVO, String username);
 }
