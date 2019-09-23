@@ -18,7 +18,7 @@ import java.util.Optional;
 public class UserAuditorConfig implements AuditorAware<String> {
     @Override
     public Optional<String> getCurrentAuditor() {
-        /*SecurityContext ctx = SecurityContextHolder.getContext();
+        SecurityContext ctx = SecurityContextHolder.getContext();
         if (ctx == null) {
             return Optional.of("system");
         }
@@ -33,9 +33,9 @@ public class UserAuditorConfig implements AuditorAware<String> {
             return Optional.of(((User) principal).getUsername());
         } else {
             return Optional.of("system");
-        }*/
-        ServletRequestAttributes servletRequestAttributes = (ServletRequestAttributes)RequestContextHolder.getRequestAttributes();
+        }
+        /*ServletRequestAttributes servletRequestAttributes = (ServletRequestAttributes)RequestContextHolder.getRequestAttributes();
         RegisterHeader registerHeader = (RegisterHeader)servletRequestAttributes.getRequest().getSession().getAttribute("user");
-        return  Optional.of(registerHeader.getUsername());
+        return  Optional.of(registerHeader.getUsername());*/
     }
 }
