@@ -34,9 +34,11 @@ public class SystemManageController {
     private BaseResponse resp;
 
     public SystemManageController(RegisterLineitemAuditService registerLineitemAuditService,
-                                  CompanyInvoiceInformationService companyInvoiceInformationService) {
+                                  CompanyInvoiceInformationService companyInvoiceInformationService,
+                                  ReceiverAddressInformationService receiverAddressInformationService) {
         this.registerLineitemAuditService = registerLineitemAuditService;
         this.companyInvoiceInformationService = companyInvoiceInformationService;
+        this.receiverAddressInformationService = receiverAddressInformationService;
         this.resp = new BaseResponse();
     }
 
@@ -185,11 +187,12 @@ public class SystemManageController {
      */
     @ApiOperation(value="新增或修改收件地址", notes = "参数：ReceiverAddressInformation")
     @RequestMapping(value = "/addOrUpdateReceiverAddressInformation")
-    public String addOrUpdateReceiverAddressInformation(@RequestBody ReceiverAddressInformation receiverAddressInformation, HttpServletRequest request){
-        HttpSession session = request.getSession();
-        User user = (User)session.getAttribute("user");
+    public String addOrUpdateReceiverAddressInformation(@RequestBody ReceiverAddressInformation receiverAddressInformation){
+        /*HttpSession session = request.getSession();
+        User user = (User)session.getAttribute("user");*/
         try {
-            receiverAddressInformation = receiverAddressInformationService.addOrUpdateReceiverAddressInformation(receiverAddressInformation, user.getUsername());
+            //receiverAddressInformation = receiverAddressInformationService.addOrUpdateReceiverAddressInformation(receiverAddressInformation, user.getUsername());
+            receiverAddressInformation = receiverAddressInformationService.addOrUpdateReceiverAddressInformation(receiverAddressInformation, "Jamie");
             return resp.setStateCode(BaseResponse.SUCCESS).setData(receiverAddressInformation).setMsg("成功").toJson();
         }catch (Exception e){
             return resp.setStateCode(BaseResponse.ERROR).setMsg("失败，原因是:"+e.getMessage()).toJson();
@@ -223,7 +226,8 @@ public class SystemManageController {
         HttpSession session = request.getSession();
         User user = (User)session.getAttribute("user");
         try {
-            Page<ReceiverAddressInformation> page = receiverAddressInformationService.searchReceiverAddressInformationBysearchingContent(vo, user.getUsername());
+            //Page<ReceiverAddressInformation> page = receiverAddressInformationService.searchReceiverAddressInformationBysearchingContent(vo, user.getUsername());
+            Page<ReceiverAddressInformation> page = receiverAddressInformationService.searchReceiverAddressInformationBysearchingContent(vo, "Jamie");
             return resp.setStateCode(BaseResponse.SUCCESS).setData(page).setMsg("查询成功").toJson();
         } catch (Exception e) {
             return resp.setStateCode(BaseResponse.ERROR).setMsg("查询失败").toJson();
