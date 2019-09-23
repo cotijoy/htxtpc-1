@@ -27,7 +27,7 @@ public interface ReceiverAddressInformationDAO extends CrudRepository<ReceiverAd
         "r.receiver, r.cellphoneNum, r.defaultFlag from ReceiverAddressInformation as r " +
         "where ( r.receiverAddress like concat('%', :receiverAddress, '%') or r.receiver like concat('%', :receiver, '%') ) "  +
         "and r.creator = :username")
-    Page<ReceiverAddressInformation> selectReceiverAddressInformations (@Param("receiverAddress")String receiverAddress, String receiver, String name, Pageable pageable);
+    Page<ReceiverAddressInformation> selectReceiverAddressInformations (@Param("receiverAddress")String receiverAddress, @Param("receiver")String receiver, @Param("username")String name, Pageable pageable);
 
     /**
      ** 查询当前用户的所有地址信息
