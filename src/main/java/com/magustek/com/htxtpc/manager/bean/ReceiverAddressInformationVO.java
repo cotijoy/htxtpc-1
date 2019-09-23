@@ -5,5 +5,5 @@ import lombok.Data;
 
 @Data
 public class ReceiverAddressInformationVO extends ReceiverAddressInformation {
-    private String searching;
+    private String searchStr;
 }
