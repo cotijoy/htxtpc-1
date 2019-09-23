@@ -6,6 +6,7 @@ import com.magustek.com.htxtpc.manager.dao.UserDao;
 import com.magustek.com.htxtpc.manager.service.ReceiverAddressInformationService;
 import com.magustek.com.htxtpc.user.bean.ReceiverAddressInformation;
 import com.magustek.com.htxtpc.user.bean.User;
+import com.magustek.com.htxtpc.util.common.util.StringUtil;
 import org.springframework.data.domain.Page;
 
 import javax.transaction.Transactional;
@@ -25,6 +26,8 @@ public class ReceiverAddressInformationServiceImpl implements ReceiverAddressInf
     @Transactional
     @Override
     public ReceiverAddressInformation addOrUpdateReceiverAddressInformation(ReceiverAddressInformation receiverAddressInformation, String username) {
+        String userCode = userDao.findUserByUsername(username).getUserCode();
+        receiverAddressInformation.setUserCode(userCode);
         receiverAddressInformationDAO.cleanReceiverAddressInformationDefaultFlagBy2("",username);
         return receiverAddressInformationDAO.save(receiverAddressInformation);
     }
@@ -43,10 +46,10 @@ public class ReceiverAddressInformationServiceImpl implements ReceiverAddressInf
     @Override
     public Page<ReceiverAddressInformation> searchReceiverAddressInformationBysearchingContent(ReceiverAddressInformationVO receiverAddressInformationVO, String username) {
         //默认搜索框为空
-        if(receiverAddressInformationVO.getSearching() == null ) {
+        if( StringUtil.isEmpty(receiverAddressInformationVO.getSearchStr()) ) {
             return receiverAddressInformationDAO.findAllByCreator(username, receiverAddressInformationVO.getPageRequest());
         } else {
-            String searchingContent = receiverAddressInformationVO.getSearching();
+            String searchingContent = receiverAddressInformationVO.getSearchStr();
             String receiverAddress = searchingContent;
             String receiver = searchingContent;
             return receiverAddressInformationDAO.selectReceiverAddressInformations
