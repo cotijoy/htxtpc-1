@@ -8,9 +8,11 @@ import com.magustek.com.htxtpc.user.bean.ReceiverAddressInformation;
 import com.magustek.com.htxtpc.user.bean.User;
 import com.magustek.com.htxtpc.util.common.util.StringUtil;
 import org.springframework.data.domain.Page;
+import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 
+@Service("ReceiverAddressInformationServiceImpl")
 public class ReceiverAddressInformationServiceImpl implements ReceiverAddressInformationService {
     private ReceiverAddressInformationDAO receiverAddressInformationDAO;
     private UserDao userDao;
