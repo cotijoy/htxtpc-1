@@ -5,6 +5,7 @@ import com.magustek.com.htxtpc.manager.bean.ReceiverAddressInformationVO;
 import com.magustek.com.htxtpc.manager.bean.UserVO;
 import com.magustek.com.htxtpc.manager.service.CompanyInvoiceInformationService;
 import com.magustek.com.htxtpc.manager.service.ReceiverAddressInformationService;
+import com.magustek.com.htxtpc.register.bean.PreRegisterHeader;
 import com.magustek.com.htxtpc.user.bean.CompanyInvoiceInformation;
 import com.magustek.com.htxtpc.user.bean.ReceiverAddressInformation;
 import com.magustek.com.htxtpc.user.bean.User;
@@ -162,7 +163,7 @@ public class SystemManageController {
     @RequestMapping(value = "/selectCompanyInvoiceInformation.do")
     public String selectCompanyInvoiceInformation(HttpSession httpSession, @RequestBody CompanyInvoiceInformationVO vo){
 
-        User user = (User)httpSession.getAttribute("user");
+        User user = (User)httpSession.getAttribute("userInfo");
         if (vo.getSearchStr() == null || vo.getSearchStr().equals("")){
             try {
                 Page<CompanyInvoiceInformation> list = companyInvoiceInformationService.findAllByCompanyCode(user.getCompanyCode(), vo);
@@ -186,13 +187,13 @@ public class SystemManageController {
      * @return
      */
     @ApiOperation(value="新增或修改收件地址", notes = "参数：ReceiverAddressInformation")
-    @RequestMapping(value = "/addOrUpdateReceiverAddressInformation")
-    public String addOrUpdateReceiverAddressInformation(@RequestBody ReceiverAddressInformation receiverAddressInformation){
-        /*HttpSession session = request.getSession();
-        User user = (User)session.getAttribute("user");*/
+    @RequestMapping(value = "/saveReceiverAddressInformation")
+    public String saveReceiverAddressInformation(@RequestBody ReceiverAddressInformation receiverAddressInformation,HttpServletRequest request){
+        HttpSession session = request.getSession();
+        PreRegisterHeader userInfo = (PreRegisterHeader)session.getAttribute("userInfo");
         try {
-            //receiverAddressInformation = receiverAddressInformationService.addOrUpdateReceiverAddressInformation(receiverAddressInformation, user.getUsername());
-            receiverAddressInformation = receiverAddressInformationService.addOrUpdateReceiverAddressInformation(receiverAddressInformation, "Jamie");
+            receiverAddressInformation = receiverAddressInformationService.addOrUpdateReceiverAddressInformation(receiverAddressInformation, userInfo.getUsername());
+            //receiverAddressInformation = receiverAddressInformationService.addOrUpdateReceiverAddressInformation(receiverAddressInformation, "Jamie");
             return resp.setStateCode(BaseResponse.SUCCESS).setData(receiverAddressInformation).setMsg("成功").toJson();
         }catch (Exception e){
             return resp.setStateCode(BaseResponse.ERROR).setMsg("失败，原因是:"+e.getMessage()).toJson();
@@ -224,10 +225,10 @@ public class SystemManageController {
     @RequestMapping(value = "/selectReceiverAddressInformation")
     public String selectReceiverAddressInformation(HttpServletRequest request, @RequestBody ReceiverAddressInformationVO vo){
         HttpSession session = request.getSession();
-        User user = (User)session.getAttribute("user");
+        PreRegisterHeader userInfo = (PreRegisterHeader)session.getAttribute("userInfo");
         try {
-            //Page<ReceiverAddressInformation> page = receiverAddressInformationService.searchReceiverAddressInformationBysearchingContent(vo, user.getUsername());
-            Page<ReceiverAddressInformation> page = receiverAddressInformationService.searchReceiverAddressInformationBysearchingContent(vo, "Jamie");
+            Page<ReceiverAddressInformation> page = receiverAddressInformationService.searchReceiverAddressInformationBysearchingContent(vo, userInfo.getUsername());
+            //Page<ReceiverAddressInformation> page = receiverAddressInformationService.searchReceiverAddressInformationBysearchingContent(vo, "Jamie");
             return resp.setStateCode(BaseResponse.SUCCESS).setData(page).setMsg("查询成功").toJson();
         } catch (Exception e) {
             return resp.setStateCode(BaseResponse.ERROR).setMsg("查询失败").toJson();
