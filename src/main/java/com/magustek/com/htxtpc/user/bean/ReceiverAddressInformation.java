@@ -43,6 +43,8 @@ public class ReceiverAddressInformation extends BaseEntity {
     @Column() private String receiverAddress;
     @ApiModelProperty(value="收货人")
     @Column() private String receiver;
+    @ApiModelProperty(value="手机号码国际区号")
+    @Column() private String phoneNationalAreaCode;
     @ApiModelProperty(value="手机号码")
     @Column() private String cellphoneNum;
     @ApiModelProperty(value="默认标识")
