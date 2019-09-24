@@ -126,9 +126,11 @@ public class SystemManageController {
      * @param companyInvoiceInformation
      * @return
      */
-    @ApiOperation(value="修改企业发票信息", notes = "参数：CompanyInvoiceInformation")
-    @RequestMapping(value = "/addOrUpdateCompanyInvoiceInformation.do")
-    public String addOrUpdateCompanyInvoiceInformation(@RequestBody CompanyInvoiceInformation companyInvoiceInformation){
+    @ApiOperation(value="新增或修改企业发票信息", notes = "参数：CompanyInvoiceInformation")
+    @RequestMapping(value = "/saveCompanyInvoiceInformation")
+    public String saveCompanyInvoiceInformation(HttpSession httpSession, @RequestBody CompanyInvoiceInformation companyInvoiceInformation){
+        PreRegisterHeader userInfo = (PreRegisterHeader)httpSession.getAttribute("userInfo");
+        companyInvoiceInformation.setCompanyCode(userInfo.getCompanyCode());
         try {
             companyInvoiceInformationService.addOrUpdateCompanyInvoiceInformation(companyInvoiceInformation);
             return resp.setStateCode(BaseResponse.SUCCESS).toJson();
@@ -143,7 +145,7 @@ public class SystemManageController {
      * @return
      */
     @ApiOperation(value="删除企业发票信息", notes = "参数：主键 id ")
-    @RequestMapping(value = "/deleteCompanyInvoiceInformation.do")
+    @RequestMapping(value = "/deleteCompanyInvoiceInformation")
     public String deleteCompanyInvoiceInformation(@RequestBody CompanyInvoiceInformation companyInvoiceInformation){
         try {
             companyInvoiceInformationService.deleteCompanyInvoiceInformation(companyInvoiceInformation);
@@ -160,20 +162,20 @@ public class SystemManageController {
      * @return
      */
     @ApiOperation(value="查询企业发票信息", notes = "参数：searchStr、page、size")
-    @RequestMapping(value = "/selectCompanyInvoiceInformation.do")
+    @RequestMapping(value = "/selectCompanyInvoiceInformation")
     public String selectCompanyInvoiceInformation(HttpSession httpSession, @RequestBody CompanyInvoiceInformationVO vo){
 
-        User user = (User)httpSession.getAttribute("userInfo");
+        PreRegisterHeader userInfo = (PreRegisterHeader)httpSession.getAttribute("userInfo");
         if (vo.getSearchStr() == null || vo.getSearchStr().equals("")){
             try {
-                Page<CompanyInvoiceInformation> list = companyInvoiceInformationService.findAllByCompanyCode(user.getCompanyCode(), vo);
+                Page<CompanyInvoiceInformation> list = companyInvoiceInformationService.findAllByCompanyCode(userInfo.getCompanyCode(), vo);
                 return resp.setStateCode(BaseResponse.SUCCESS).setData(list).toJson();
             }catch (Exception e){
                 return resp.setStateCode(BaseResponse.ERROR).setMsg(e.getMessage()).toJson();
             }
         }else{
             try {
-                Page<CompanyInvoiceInformation> list = companyInvoiceInformationService.findAllByCompanyNameOrAccountName(user.getCompanyCode(), vo);
+                Page<CompanyInvoiceInformation> list = companyInvoiceInformationService.findAllByCompanyNameOrAccountName(userInfo.getCompanyCode(), vo);
                 return resp.setStateCode(BaseResponse.SUCCESS).setData(list).toJson();
             }catch (Exception e){
                 return resp.setStateCode(BaseResponse.ERROR).setMsg(e.getMessage()).toJson();
