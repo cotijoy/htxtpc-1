@@ -74,12 +74,12 @@ public class RegisterController {
             if (registResult.get("user") == null) {
                 request.getRequestDispatcher("").forward(request, response);  //跳转到注册页面 具体路径未知
             } else {
-                /*Integer status = (Integer) registResult.get("status");
+                Integer status = (Integer) registResult.get("status");
                 if (status == ResultObject.accountStatus_2) {
-                   涉及权限
+                   //涉及权限
                 } else {
 
-                }*/
+                }
                 session.setAttribute("user",registResult.get("user"));
                 return registResult;
             }
