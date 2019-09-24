@@ -6,10 +6,12 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.Serializable;
+
 @ApiModel(value = "注册模型——前端注册时表单传过来的数据模型")
 @Data
 @AllArgsConstructor
-public class RegisterModel {
+public class RegisterModel implements Serializable {
     private String companyName;                                 //企业名称
     private String creditCode;                                  //统一社会信用代码
     private String companyAddress;                              //企业地址
