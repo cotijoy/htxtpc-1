@@ -31,6 +31,7 @@ public class ReceiverAddressInformationServiceImpl implements ReceiverAddressInf
         String userCode = userDao.findUserByUsername(username).getUserCode();
         receiverAddressInformation.setUserCode(userCode);
         receiverAddressInformationDAO.cleanReceiverAddressInformationDefaultFlagBy2("",username);
+        //receiverAddressInformationDAO.cleanReceiverAddressInformationDefaultFlagBy2("","Jamie");
         return receiverAddressInformationDAO.save(receiverAddressInformation);
     }
 
