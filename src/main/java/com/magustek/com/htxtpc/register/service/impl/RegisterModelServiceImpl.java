@@ -16,6 +16,7 @@ import com.magustek.com.htxtpc.user.bean.Company;
 import com.magustek.com.htxtpc.user.bean.User;
 import com.magustek.com.htxtpc.user.dao.CompanyDAO;
 import com.magustek.com.htxtpc.user.dao.UserDAO;
+import com.magustek.com.htxtpc.util.ContextUtils;
 import com.magustek.com.htxtpc.util.base.BaseResponse;
 import com.magustek.com.htxtpc.util.common.util.AESOperator;
 import com.magustek.com.htxtpc.util.common.util.CommonUtil;
@@ -25,8 +26,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,6 +39,7 @@ import java.util.Map;
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import javax.servlet.http.HttpSession;
 import javax.transaction.Transactional;
 import java.util.Properties;
 import java.util.UUID;
@@ -150,7 +155,7 @@ public class RegisterModelServiceImpl implements RegisterModelService {
     public Map<String, Object> userlogin(String username, String password) throws Exception {
             Map<String, Object> registResult = new HashMap<>();
             if ( !StringUtil.isEmpty(username) && !StringUtil.isEmpty(password)) {
-                password = AESOperator.encrypt(password);  //对输入的密码进行加密，再查找
+                /*password = AESOperator.encrypt(password);  //对输入的密码进行加密，再查找*/
                 RegisterHeader registerHeader = registerHeaderDAO.findByUsernameAndPassword(username,password);
                 if (registerHeader != null) {
                     registResult.put("accountStatus",ResultObject.accountStatus_3);
@@ -168,6 +173,32 @@ public class RegisterModelServiceImpl implements RegisterModelService {
             }
         return registResult;
     }
+
+    /**
+     * 用户登录
+     */
+    @Override
+    public PreRegisterHeader userLogin(String username, String password) {
+        PreRegisterHeader preRegisterHeader = preRegisterHeaderDAO.findByUsername(username);
+        return preRegisterHeader;
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        PreRegisterHeader preRegisterHeader = this.userLogin(username,"");
+        if(preRegisterHeader == null){
+            throw new UsernameNotFoundException("用户不存在！");
+        }
+        HttpSession session = ContextUtils.getSession();
+        //session.setAttribute("user",preRegisterHeader);
+        //将用户所属公司列表存入session，用户登录成功后，可以直接使用。
+        /*if(session!=null){
+            session.setAttribute("CompanyList",this.getCompanyModelList(userInfo.getLoginname(), userInfo.getPhone()));
+        }*/
+
+        return new org.springframework.security.core.userdetails.User(preRegisterHeader.getUsername(), preRegisterHeader.getPassword().toLowerCase(), new ArrayList<>());
+    }
+
 
     /**
      * 获取上传文件的信息
