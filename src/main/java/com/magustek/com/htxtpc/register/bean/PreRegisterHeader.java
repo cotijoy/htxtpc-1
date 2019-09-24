@@ -9,13 +9,14 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import java.io.Serializable;
 
 @ApiModel(value = "PreRegisterHeader-用户(预)注册抬头")
 @Data
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-public class PreRegisterHeader extends BaseEntity {
+public class PreRegisterHeader extends BaseEntity implements Serializable {
     @ApiModelProperty(value = "企业编码")
     @Column(nullable = false) private Long companyCode;
     @ApiModelProperty(value = "用户名")
