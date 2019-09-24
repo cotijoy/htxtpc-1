@@ -1,6 +1,7 @@
 package com.magustek.com.htxtpc.register.controller;
 
 
+import com.magustek.com.htxtpc.register.bean.PreRegisterHeader;
 import com.magustek.com.htxtpc.register.bean.RegisterHeader;
 import com.magustek.com.htxtpc.register.bean.RegisterHeaderVO;
 import com.magustek.com.htxtpc.register.bean.RegisterModel;
@@ -66,11 +67,11 @@ public class RegisterController {
 
     @ApiOperation(value="用户登录", notes = "参数：HttpServletRequest, HttpServletResponse, username, password")
     @RequestMapping(value = "/userLogin")
-    public Map<String, Object> login (HttpServletRequest request, HttpServletResponse response, String username, String password) throws Exception {
+    public Map<String, Object> login (HttpServletRequest request, HttpServletResponse response, @RequestBody PreRegisterHeader preRegisterHeader) throws Exception {
         HttpSession session = request.getSession();
         Map<String, Object> registResult = new HashMap<>();
         if (session.getAttribute("user") == null) {  //用户未登录或session已经过期
-            registResult = registerModelService.userlogin(username, password);
+            registResult = registerModelService.userlogin(preRegisterHeader.getUsername(), preRegisterHeader.getPassword());
             if (registResult.get("user") == null) {
                 request.getRequestDispatcher("").forward(request, response);  //跳转到注册页面 具体路径未知
             } else {

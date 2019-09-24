@@ -259,6 +259,8 @@ public class RegisterModelServiceImpl implements RegisterModelService {
 
     /**
      * 发送邮箱验证码并校验用户是否存在
+     * @param registerHeader
+     * @return
      */
     @Override
     public String sendEmailCaptchaAndVerifyUser(RegisterHeader registerHeader){
@@ -271,8 +273,11 @@ public class RegisterModelServiceImpl implements RegisterModelService {
         this.sendEmailCaptcha(registerHeader.getEmail());
         return resp.setStateCode(BaseResponse.SUCCESS).setMsg("邮箱验证码发送成功").toJson();
     }
+
     /**
      * 校验验证码是否正确
+     * @param vo
+     * @return
      */
     @Override
     public String emailCaptchaVerify(RegisterHeaderVO vo){
@@ -282,15 +287,23 @@ public class RegisterModelServiceImpl implements RegisterModelService {
         }
         return resp.setStateCode(BaseResponse.ERROR).setMsg("验证码错误").toJson();
     }
+
     /**
      * 更新用户密码
+     * @param registerHeader
      */
     @Override
     public void updatePassword(RegisterHeader registerHeader){
         RegisterHeader header = registerHeaderDAO.findByUsernameAndEmail(registerHeader.getUsername(), registerHeader.getEmail());
-        header.setPassword(registerHeader.getPassword());
+        try {
+            header.setPassword(AESOperator.encrypt(registerHeader.getPassword()));
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            e.printStackTrace();
+        }
         registerHeaderDAO.save(header);
     }
+
     /**
      * 发送短信验证码
      * @param phoneNum
