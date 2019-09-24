@@ -6,9 +6,7 @@ server:
   server-header: text/plain;charset=UTF-8
   servlet:
     context-path: /
-    #session.timeout: 900 #session timeout in seconds
-        session:
-          timeout: 30m #session timeout in seconds
+    session.timeout: 900 #session timeout in seconds
 spring:
   messages.encoding: UTF-8
   http:
