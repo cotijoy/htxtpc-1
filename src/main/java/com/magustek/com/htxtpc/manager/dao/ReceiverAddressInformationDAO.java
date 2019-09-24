@@ -22,11 +22,15 @@ public interface ReceiverAddressInformationDAO extends CrudRepository<ReceiverAd
     /**
      ** 模糊查询收件地址信息
      */
-    @Query(value = "select r.userCode, r.nationTest, r.nation, r.provinceText, r.province, " +
+    /*@Query(value = "select r.userCode, r.nationTest, r.nation, r.provinceText, r.province, " +
         "r.cityText, r.city, r.areaText, r.area, r.townText, r.town, r.receiverAddress, " +
         "r.receiver, r.cellphoneNum, r.defaultFlag from ReceiverAddressInformation as r " +
         "where ( r.receiverAddress like concat('%', :receiverAddress, '%') or r.receiver like concat('%', :receiver, '%') ) "  +
-        "and r.creator = :username")
+        "and r.creator = :username")*/
+    @Query(value = "select r " +
+            "from ReceiverAddressInformation as r " +
+            "where ( r.receiverAddress like concat('%', :receiverAddress, '%') or r.receiver like concat('%', :receiver, '%') ) "  +
+            "and r.creator = :username")
     Page<ReceiverAddressInformation> selectReceiverAddressInformations (@Param("receiverAddress")String receiverAddress, @Param("receiver")String receiver, @Param("username")String name, Pageable pageable);
 
     /**
