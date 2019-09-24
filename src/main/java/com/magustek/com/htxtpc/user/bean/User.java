@@ -7,11 +7,12 @@ import lombok.Data;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import java.io.Serializable;
 
 @ApiModel(value = "User-用户表")
 @Data
 @Entity
-public class User extends BaseEntity {
+public class User extends BaseEntity implements Serializable {
     @ApiModelProperty(value = "企业编码")
     @Column(nullable = false) private Long companyCode;
     @ApiModelProperty(value = "部门编码")
