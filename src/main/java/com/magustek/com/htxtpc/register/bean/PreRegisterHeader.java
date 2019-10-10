@@ -19,6 +19,22 @@ import java.io.Serializable;
 public class PreRegisterHeader extends BaseEntity implements Serializable {
     @ApiModelProperty(value = "企业编码")
     @Column(nullable = false) private Long companyCode;
+    @ApiModelProperty(value = "企业全称")
+    @Column(nullable = false) private String companyFullName;
+    @ApiModelProperty(value = "统一社会信用编码")
+    @Column(nullable = false) private String creditCode;
+    @ApiModelProperty(value = "企业地址")
+    @Column(nullable = false) private String companyAddress;
+    @ApiModelProperty(value = "组织类型")
+    @Column(nullable = false) private String organizationType;
+    @ApiModelProperty(value = "法人代表")
+    @Column(nullable = false) private String legalPerson;
+    @ApiModelProperty(value = "部门全称")
+    @Column(nullable = false) private String departmentFullName;
+    @ApiModelProperty(value = "岗位全称")
+    @Column(nullable = false) private String positionFullName;
+    @ApiModelProperty(value = "用户全称")
+    @Column(nullable = false) private String userFullName;
     @ApiModelProperty(value = "用户名")
     @Column(nullable = false) private String username;
     @ApiModelProperty(value = "管理员标识")

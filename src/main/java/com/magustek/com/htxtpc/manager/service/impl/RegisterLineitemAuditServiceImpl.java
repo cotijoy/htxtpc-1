@@ -1,85 +1,83 @@
 package com.magustek.com.htxtpc.manager.service.impl;
 
-import com.magustek.com.htxtpc.manager.bean.UserVO;
-import com.magustek.com.htxtpc.manager.dao.CompanyInvoiceInformationDao;
-import com.magustek.com.htxtpc.user.bean.User;
-import com.magustek.com.htxtpc.manager.dao.UserDao;
+import com.magustek.com.htxtpc.manager.bean.RegisterLineitemAuditVO;
+import com.magustek.com.htxtpc.manager.dao.RegisterLineitemAuditDAO;
 import com.magustek.com.htxtpc.manager.service.RegisterLineitemAuditService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
-import org.springframework.data.domain.Pageable;
-
 import java.util.Map;
 
+@Slf4j
 @Service("RegisterLineitemAuditServiceImpl")
 public class RegisterLineitemAuditServiceImpl implements RegisterLineitemAuditService {
 
-    private UserDao userDao;
+    private RegisterLineitemAuditDAO registerLineitemAuditDAO;
 
-    public RegisterLineitemAuditServiceImpl(UserDao userDao) {
-        this.userDao = userDao;
+    public RegisterLineitemAuditServiceImpl(RegisterLineitemAuditDAO registerLineitemAuditDAO) {
+        this.registerLineitemAuditDAO = registerLineitemAuditDAO;
     }
 
     /**
-     *
-     * 企业管理员审核搜索
+     * 注册信息条件查询 supplier
+     * @param companyCode
      * @param vo
      * @return
      */
     @Override
-    public Page<User> auditSearchByAdmin(Long companyCode, UserVO vo) {
-        return userDao.findAllByCompanyCodeAndUserFullNameLikeAndAccountStatus(companyCode,"%"+vo.getUserFullName()+"%", vo.getAccountStatus(), vo.getPageRequest());
+    public Page<Map<String, Object>> findRegisterInformationBySupplier(Long companyCode, RegisterLineitemAuditVO vo) {
+        /*Page<Map<String, Object>> registerInformationBySupplier = registerLineitemAuditDAO.findRegisterInformationBySupplier(vo.getAflag(), vo.getAuditStatus(), "%" + vo.getSearchStr() + "%", companyCode, vo.getPageRequest());
+        List<Map<String, Object>> list = registerInformationBySupplier.getContent();
+        Map<String, Object> contents = list.get(0);
+        for (Map<String, Object> content : contents){
+            //(String)content.get("auditStatus")
+        }
+        return registerInformationBySupplier;*/
+        return registerLineitemAuditDAO.findRegisterInformationBySupplier(vo.getAflag(), vo.getAuditStatus(), "%" + vo.getSearchStr() + "%", companyCode, vo.getPageRequest());
     }
 
     /**
-     * 企业管理员审核默认搜索
+     * 注册信息默认查询 supplier
+     * @param companyCode
      * @param vo
      * @return
      */
     @Override
-    public Page<User> auditAllSearchByAdmin(Long companyCode, UserVO vo) {
-        return userDao.findAllByCompanyCodeAndAccountStatus(companyCode, vo.getAccountStatus(), vo.getPageRequest());
+    public Page<Map<String, Object>> findAllRegisterInformationBySupplier(Long companyCode, RegisterLineitemAuditVO vo) {
+        return registerLineitemAuditDAO.findAllRegisterInformationBySupplier(vo.getAflag(), vo.getAuditStatus(), companyCode, vo.getPageRequest());
     }
 
     /**
-     * 运维审核：按人名搜索
+     * 注册信息条件查询 admin
      * @param vo
      * @return
      */
     @Override
-    public Page<Map<String, Object>> auditSearchUserByOperator(UserVO vo) {
-        return userDao.findByAdminFlagAccountStatusUserFullName("X", vo.getAccountStatus(), "%"+vo.getUserFullName()+"%", vo.getPageRequest());
+    public Page<Map<String, Object>> findRegisterInformationByAdmin(RegisterLineitemAuditVO vo) {
+        return registerLineitemAuditDAO.findRegisterInformationByAdmin(vo.getAflag(), vo.getAuditStatus(), vo.getSearchStr(), vo.getPageRequest());
     }
 
     /**
-     * 运维审核：按人名默认搜索
+     * 注册信息默认查询 admin
      * @param vo
      * @return
      */
     @Override
-    public Page<Map<String, Object>> auditAllSearchUserByOperator(UserVO vo) {
-        return userDao.findAllByAdminFlagAccountStatusUserFullName("X", vo.getAccountStatus(), vo.getPageRequest());
+    public Page<Map<String, Object>> findAllRegisterInformationByAdmin(RegisterLineitemAuditVO vo) {
+        /*Map<String, Object> contentMap = new HashMap<>();
+        Page<Map<String, Object>> registerInformationPage = registerLineitemAuditDAO.findAllRegisterInformationByAdmin(vo.getAflag(), vo.getAuditStatus(), vo.getPageRequest());
+        List<Map<String, Object>> contents = registerInformationPage.getContent();
+        for (Map<String, Object> content : contents){
+            if (content.get("auditStatus").toString().equalsIgnoreCase("DSH")){
+                content.put("auditStatusText", "待审核");
+            }else {
+                content.put("auditStatusText", "已审核");
+            }
+        }
+        contentMap.put("content", contents);
+        contentMap.put("totalPages", registerInformationPage.getTotalPages());
+        return contentMap;*/
+        return registerLineitemAuditDAO.findAllRegisterInformationByAdmin(vo.getAflag(), vo.getAuditStatus(), vo.getPageRequest());
     }
-
-    /**
-     * 运维审核：按公司名搜索
-     * @param vo
-     * @return
-     */
-    @Override
-    public Page<Map<String, Object>> auditSearchCompanyByOperator(UserVO vo) {
-        return userDao.findByAdminFlagAccountStatusUserCompany("X", vo.getAccountStatus(), "%"+vo.getUserCompany()+"%", vo.getPageRequest());
-    }
-
-    /**
-     * 运维审核：按公司名默认搜索
-     * @param vo
-     * @return
-     */
-    @Override
-    public Page<Map<String, Object>> auditAllSearchCompanyByOperator(UserVO vo) {
-        return userDao.findAllByAdminFlagAccountStatusUserCompany("X", vo.getAccountStatus(), vo.getPageRequest());
-    }
-
 }

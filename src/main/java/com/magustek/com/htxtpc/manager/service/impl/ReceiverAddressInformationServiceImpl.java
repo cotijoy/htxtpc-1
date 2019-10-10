@@ -2,10 +2,9 @@ package com.magustek.com.htxtpc.manager.service.impl;
 
 import com.magustek.com.htxtpc.manager.bean.ReceiverAddressInformationVO;
 import com.magustek.com.htxtpc.manager.dao.ReceiverAddressInformationDAO;
-import com.magustek.com.htxtpc.manager.dao.UserDao;
 import com.magustek.com.htxtpc.manager.service.ReceiverAddressInformationService;
 import com.magustek.com.htxtpc.user.bean.ReceiverAddressInformation;
-import com.magustek.com.htxtpc.user.bean.User;
+import com.magustek.com.htxtpc.user.dao.UserDAO;
 import com.magustek.com.htxtpc.util.common.util.StringUtil;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -15,11 +14,11 @@ import javax.transaction.Transactional;
 @Service("ReceiverAddressInformationServiceImpl")
 public class ReceiverAddressInformationServiceImpl implements ReceiverAddressInformationService {
     private ReceiverAddressInformationDAO receiverAddressInformationDAO;
-    private UserDao userDao;
+    private UserDAO userDAO;
 
-    public ReceiverAddressInformationServiceImpl(ReceiverAddressInformationDAO receiverAddressInformationDAO, UserDao userDao) {
+    public ReceiverAddressInformationServiceImpl(ReceiverAddressInformationDAO receiverAddressInformationDAO, UserDAO userDAO) {
         this.receiverAddressInformationDAO = receiverAddressInformationDAO;
-        this.userDao = userDao;
+        this.userDAO = userDAO;
     }
 
     /**
@@ -28,7 +27,7 @@ public class ReceiverAddressInformationServiceImpl implements ReceiverAddressInf
     @Transactional
     @Override
     public ReceiverAddressInformation addOrUpdateReceiverAddressInformation(ReceiverAddressInformation receiverAddressInformation, String username) {
-        String userCode = userDao.findUserByUsername(username).getUserCode();
+        String userCode = userDAO.findUserByUsername(username).getUserCode();
         receiverAddressInformation.setUserCode(userCode);
         receiverAddressInformationDAO.cleanReceiverAddressInformationDefaultFlagBy2("",username);
         //receiverAddressInformationDAO.cleanReceiverAddressInformationDefaultFlagBy2("","Jamie");

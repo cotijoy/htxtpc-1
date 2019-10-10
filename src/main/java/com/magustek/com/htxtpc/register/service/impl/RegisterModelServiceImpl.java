@@ -28,6 +28,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -295,12 +296,8 @@ public class RegisterModelServiceImpl implements RegisterModelService {
     @Override
     public void updatePassword(RegisterHeader registerHeader){
         RegisterHeader header = registerHeaderDAO.findByUsernameAndEmail(registerHeader.getUsername(), registerHeader.getEmail());
-        try {
-            header.setPassword(AESOperator.encrypt(registerHeader.getPassword()));
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            e.printStackTrace();
-        }
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        header.setPassword(encoder.encode(registerHeader.getPassword()));
         registerHeaderDAO.save(header);
     }
 

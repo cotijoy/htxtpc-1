@@ -2,6 +2,7 @@ package com.magustek.com.htxtpc.manager.controller;
 
 import com.magustek.com.htxtpc.manager.bean.CompanyInvoiceInformationVO;
 import com.magustek.com.htxtpc.manager.bean.ReceiverAddressInformationVO;
+import com.magustek.com.htxtpc.manager.bean.RegisterLineitemAuditVO;
 import com.magustek.com.htxtpc.manager.bean.UserVO;
 import com.magustek.com.htxtpc.manager.service.CompanyInvoiceInformationService;
 import com.magustek.com.htxtpc.manager.service.ReceiverAddressInformationService;
@@ -44,81 +45,59 @@ public class SystemManageController {
     }
 
     /**
-     * 企业管理员审核搜索
+     * 注册信息查询
      * @param httpSession
      * @param vo
      * @return
      */
-    @ApiOperation(value="企业管理员审核搜索", notes = "参数：accountStatus、userFullName、size、page ")
-    @RequestMapping(value = "/auditSearchByAdmin.do")
-    public String auditSearchByAdmin(HttpSession httpSession, @RequestBody UserVO vo){
-        User user = (User)httpSession.getAttribute("user");
-        if (vo.getUserFullName() == null || vo.getUserFullName().equals("")){
-            try {
-                Page<User> list = registerLineitemAuditService.auditAllSearchByAdmin(user.getCompanyCode(), vo);
-                return resp.setStateCode(BaseResponse.SUCCESS).setData(list).toJson();
-            }catch (Exception e){
-                return resp.setStateCode(BaseResponse.ERROR).setMsg(e.getMessage()).toJson();
+    @ApiOperation(value="注册信息查询", notes = "参数：auditFlag、aflag、searchStr、size、page ")
+    @RequestMapping(value = "/selectRegisterInformation")
+    public String selectRegisterInformation(HttpSession httpSession, @RequestBody RegisterLineitemAuditVO vo){
+        PreRegisterHeader userInfo = (PreRegisterHeader) httpSession.getAttribute("userInfo");
+        if (vo.getAuditFlag().equals("DSH")){
+            vo.setAuditStatus("待审核");
+        }else if (vo.getAuditFlag().equals("YSH")){
+            vo.setAuditStatus("已审核");
+        }
+        if (vo.getAflag().equals("admin")){
+            //管理员查询 运维管理员
+            vo.setAflag("X");
+            if (vo.getSearchStr() == null || vo.getSearchStr().equals("")){
+                try {
+                    Page<Map<String, Object>> list = registerLineitemAuditService.findAllRegisterInformationByAdmin(vo);
+                    return resp.setStateCode(BaseResponse.SUCCESS).setData(list).toJson();
+                }catch (Exception e){
+                    return resp.setStateCode(BaseResponse.ERROR).setMsg(e.getMessage()).toJson();
+                }
+            }else {
+                try {
+                    Page<Map<String, Object>> list = registerLineitemAuditService.findRegisterInformationByAdmin(vo);
+                    return resp.setStateCode(BaseResponse.SUCCESS).setData(list).toJson();
+                }catch (Exception e){
+                    return resp.setStateCode(BaseResponse.ERROR).setMsg(e.getMessage()).toJson();
+                }
             }
-        }else {
-            try {
-                Page<User> list = registerLineitemAuditService.auditSearchByAdmin(user.getCompanyCode(), vo);
-                return resp.setStateCode(BaseResponse.SUCCESS).setData(list).toJson();
-            }catch (Exception e){
-                return resp.setStateCode(BaseResponse.ERROR).setMsg(e.getMessage()).toJson();
+        }else if (vo.getAflag().equals("supplier")){
+            //供应商查询 企业管理员
+            vo.setAflag("");
+            if (vo.getSearchStr() == null || vo.getSearchStr().equals("")){
+                try {
+                    Page<Map<String, Object>> list = registerLineitemAuditService.findAllRegisterInformationBySupplier(userInfo.getCompanyCode(), vo);
+                    return resp.setStateCode(BaseResponse.SUCCESS).setData(list).toJson();
+                }catch (Exception e){
+                    return resp.setStateCode(BaseResponse.ERROR).setMsg(e.getMessage()).toJson();
+                }
+            }else {
+                try {
+                    Page<Map<String, Object>> list = registerLineitemAuditService.findRegisterInformationBySupplier(userInfo.getCompanyCode(), vo);
+                    return resp.setStateCode(BaseResponse.SUCCESS).setData(list).toJson();
+                }catch (Exception e){
+                    return resp.setStateCode(BaseResponse.ERROR).setMsg(e.getMessage()).toJson();
+                }
             }
         }
-    }
+        return resp.setStateCode(BaseResponse.ERROR).setMsg("查询失败").toJson();
 
-    /**
-     * 运维审核：按人名搜索
-     * @param vo
-     * @return
-     */
-    @ApiOperation(value="运维人员审核按人名搜索", notes = "参数：accountStatus、userFullName、page、size ")
-    @RequestMapping(value = "/auditSearchUserByOperator.do")
-    public String auditSearchUserByOperator(@RequestBody UserVO vo) {
-        if (vo.getUserFullName() == null || vo.getUserFullName().equals("")){
-            //默认搜索
-            try {
-                Page<Map<String, Object>> list = registerLineitemAuditService.auditAllSearchUserByOperator(vo);
-                return resp.setStateCode(BaseResponse.SUCCESS).setData(list).toJson();
-            }catch (Exception e){
-                return resp.setStateCode(BaseResponse.ERROR).setMsg(e.getMessage()).toJson();
-            }
-        }else {
-            try {
-                Page<Map<String, Object>> list = registerLineitemAuditService.auditSearchUserByOperator(vo);
-                return resp.setStateCode(BaseResponse.SUCCESS).setData(list).toJson();
-            }catch (Exception e){
-                return resp.setStateCode(BaseResponse.ERROR).setMsg(e.getMessage()).toJson();
-            }
-        }
-    }
-
-    /**
-     * 运维审核：按公司搜索 accountStatus: 用户状态(审核通过，正式用户："X" ； 待审核的用户："")
-     * @param vo
-     * @return
-     */
-    @ApiOperation(value="运维人员审核按公司搜索", notes = "参数：accountStatus、userCompany、size、page")
-    @RequestMapping(value = "/auditSearchCompanyByOperator.do")
-    public String auditSearchCompanyByOperator(@RequestBody UserVO vo) {
-        if (vo.getUserCompany() == null || vo.getUserCompany().equals("")){
-            try {
-                Page<Map<String, Object>> list = registerLineitemAuditService.auditAllSearchCompanyByOperator(vo);
-                return resp.setStateCode(BaseResponse.SUCCESS).setData(list).toJson();
-            }catch (Exception e){
-                return resp.setStateCode(BaseResponse.ERROR).setMsg(e.getMessage()).toJson();
-            }
-        }else{
-            try {
-                Page<Map<String, Object>> list = registerLineitemAuditService.auditSearchCompanyByOperator(vo);
-                return resp.setStateCode(BaseResponse.SUCCESS).setData(list).toJson();
-            }catch (Exception e){
-                return resp.setStateCode(BaseResponse.ERROR).setMsg(e.getMessage()).toJson();
-            }
-        }
     }
 
     /**

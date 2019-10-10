@@ -1,6 +1,8 @@
 package com.magustek.com.htxtpc.config;
 
 
+import com.magustek.com.htxtpc.register.bean.PreRegisterHeader;
+import com.magustek.com.htxtpc.register.dao.PreRegisterHeaderDAO;
 import com.magustek.com.htxtpc.user.bean.CompanyModel;
 import com.magustek.com.htxtpc.user.bean.UserInfo;
 import com.magustek.com.htxtpc.user.service.UserInfoService;
@@ -16,6 +18,7 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.MessageDigestPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
@@ -47,9 +50,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private String LOGOUT_PROCESSOR;
 
     private UserInfoService userInfoService;
+    private PreRegisterHeaderDAO preRegisterHeaderDAO;
 
-    public SecurityConfig(UserInfoService userInfoService) {
+    public SecurityConfig(PreRegisterHeaderDAO preRegisterHeaderDAO, UserInfoService userInfoService) {
         this.userInfoService = userInfoService;
+        this.preRegisterHeaderDAO = preRegisterHeaderDAO;
     }
 
     @Override
@@ -80,22 +85,25 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .successHandler((request, response, auth) -> {
                 String name = auth.getName();
 
-                UserInfo userInfo = userInfoService.userLogin(name, "" , "O001");
-                userInfo.setPassword("");
+                //UserInfo userInfo = userInfoService.userLogin(name, "" , "O001");
+                //userInfo.setPassword("");
+                PreRegisterHeader userInfo = preRegisterHeaderDAO.findByUsername(name);
+                //设置session，供以后使用
+                request.getSession().setAttribute("userInfo", userInfo);
 
-                @SuppressWarnings("unchecked")
-                List<CompanyModel> companyList = (List<CompanyModel>)request.getSession().getAttribute("CompanyList");
+                //@SuppressWarnings("unchecked")
+                //List<CompanyModel> companyList = (List<CompanyModel>)request.getSession().getAttribute("CompanyList");
 
                 BaseResponse baseResponse = new BaseResponse();
                 baseResponse.setStateCode(BaseResponse.SUCCESS).setMsg("登录成功").setData(userInfo);
-                if(companyList!=null && companyList.size()>1){
+                /*if(companyList!=null && companyList.size()>1){
                     baseResponse.changeStateCode(BaseResponse.ONEMORECOMPANY);
                 }
                 if(companyList!=null && companyList.size()==1){
                     userInfo.setCompanyModel(companyList.get(0));
                 }
                 //设置session，供以后使用
-                request.getSession().setAttribute("userInfo", userInfo);
+                request.getSession().setAttribute("userInfo", userInfo);*/
 
                 writeResponse(response, baseResponse);
             })
@@ -123,14 +131,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 }
             }).permitAll();
         //增加自定义过滤器
-        http.addFilterAfter(new SecurityFilter(), UsernamePasswordAuthenticationFilter.class);
+        //http.addFilterAfter(new SecurityFilter(), UsernamePasswordAuthenticationFilter.class);
     }
 
     @SuppressWarnings("deprecation")
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception{
         //注册用户登录服务
-        auth.userDetailsService(userInfoService).passwordEncoder(new MessageDigestPasswordEncoder("MD5"));
+        auth.userDetailsService(userInfoService).passwordEncoder(new BCryptPasswordEncoder());
     }
 
     private void writeResponse(HttpServletResponse response, BaseResponse baseResponse) throws IOException {

@@ -25,7 +25,7 @@ public class AllowResource {
             //"/test/*",
             "/#login",
             "/mro/register",
-            "/user/*",
-            "/mro/systemManager"
+            /*"/user/*",
+            "/mro/systemManager"*/
     };
 }

@@ -1,20 +1,19 @@
 package com.magustek.com.htxtpc.manager.service.impl;
 
 import com.magustek.com.htxtpc.manager.bean.CompanyInvoiceInformationVO;
-import com.magustek.com.htxtpc.manager.dao.CompanyInvoiceInformationDao;
+import com.magustek.com.htxtpc.manager.dao.CompanyInvoiceInformationDAO;
 import com.magustek.com.htxtpc.manager.service.CompanyInvoiceInformationService;
 import com.magustek.com.htxtpc.user.bean.CompanyInvoiceInformation;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service("CompanyInvoiceInformationServiceImpl")
 public class CompanyInvoiceInformationServiceImpl implements CompanyInvoiceInformationService {
 
-    private CompanyInvoiceInformationDao companyInvoiceInformationDao;
+    private CompanyInvoiceInformationDAO companyInvoiceInformationDAO;
 
-    public CompanyInvoiceInformationServiceImpl(CompanyInvoiceInformationDao companyInvoiceInformationDao) {
-        this.companyInvoiceInformationDao = companyInvoiceInformationDao;
+    public CompanyInvoiceInformationServiceImpl(CompanyInvoiceInformationDAO companyInvoiceInformationDAO) {
+        this.companyInvoiceInformationDAO = companyInvoiceInformationDAO;
     }
 
     /**
@@ -23,7 +22,7 @@ public class CompanyInvoiceInformationServiceImpl implements CompanyInvoiceInfor
      */
     @Override
     public void addOrUpdateCompanyInvoiceInformation(CompanyInvoiceInformation companyInvoiceInformation) {
-        companyInvoiceInformationDao.save(companyInvoiceInformation);
+        companyInvoiceInformationDAO.save(companyInvoiceInformation);
     }
 
     /**
@@ -31,7 +30,7 @@ public class CompanyInvoiceInformationServiceImpl implements CompanyInvoiceInfor
      */
     @Override
     public void deleteCompanyInvoiceInformation(CompanyInvoiceInformation companyInvoiceInformation) {
-        companyInvoiceInformationDao.deleteById(companyInvoiceInformation.getId());
+        companyInvoiceInformationDAO.deleteById(companyInvoiceInformation.getId());
     }
 
     /**
@@ -42,7 +41,7 @@ public class CompanyInvoiceInformationServiceImpl implements CompanyInvoiceInfor
      */
     @Override
     public Page<CompanyInvoiceInformation> findAllByCompanyNameOrAccountName(Long companyCode, CompanyInvoiceInformationVO vo) {
-        return companyInvoiceInformationDao.findAllByCompanyNameOrAccountName(vo.getSearchStr(), companyCode, vo.getPageRequest());
+        return companyInvoiceInformationDAO.findAllByCompanyNameOrAccountName(vo.getSearchStr(), companyCode, vo.getPageRequest());
     }
 
     /**
@@ -53,6 +52,6 @@ public class CompanyInvoiceInformationServiceImpl implements CompanyInvoiceInfor
      */
     @Override
     public Page<CompanyInvoiceInformation> findAllByCompanyCode(Long companyCode, CompanyInvoiceInformationVO vo) {
-        return companyInvoiceInformationDao.findAllByCompanyCode(companyCode, vo.getPageRequest());
+        return companyInvoiceInformationDAO.findAllByCompanyCode(companyCode, vo.getPageRequest());
     }
 }

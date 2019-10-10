@@ -18,6 +18,10 @@ import javax.persistence.Entity;
 public class RegisterHeader extends BaseEntity {
     @ApiModelProperty(value = "企业编码")
     @Column(nullable = false) private Long companyCode;
+    @ApiModelProperty(value = "部门编码")
+    @Column(nullable = false) private String departmentCode;
+    @ApiModelProperty(value = "岗位编码")
+    @Column(nullable = false) private String positionCode;
     @ApiModelProperty(value = "用户名")
     @Column(nullable = false) private String username;
     @ApiModelProperty(value = "管理员标识")

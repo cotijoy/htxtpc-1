@@ -4,4 +4,5 @@ import com.magustek.com.htxtpc.user.bean.User;
 import org.springframework.data.repository.CrudRepository;
 
 public interface UserDAO extends CrudRepository<User,Long> {
+    User findUserByUsername(String username);
 }

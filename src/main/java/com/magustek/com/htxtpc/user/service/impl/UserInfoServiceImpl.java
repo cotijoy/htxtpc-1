@@ -1,5 +1,7 @@
 package com.magustek.com.htxtpc.user.service.impl;
 
+import com.magustek.com.htxtpc.register.bean.PreRegisterHeader;
+import com.magustek.com.htxtpc.register.dao.PreRegisterHeaderDAO;
 import com.magustek.com.htxtpc.user.bean.CompanyModel;
 import com.magustek.com.htxtpc.user.bean.UserAuthSet;
 import com.magustek.com.htxtpc.user.bean.UserInfo;
@@ -25,9 +27,11 @@ import java.util.Map;
 @Component("userInfoService")
 public class UserInfoServiceImpl implements UserInfoService {
     private HttpUtils httpUtils;
+    private PreRegisterHeaderDAO preRegisterHeaderDAO;
 
-    public UserInfoServiceImpl(HttpUtils httpUtils) {
+    public UserInfoServiceImpl(HttpUtils httpUtils, PreRegisterHeaderDAO preRegisterHeaderDAO) {
         this.httpUtils = httpUtils;
+        this.preRegisterHeaderDAO = preRegisterHeaderDAO;
     }
 
 
@@ -88,7 +92,7 @@ public class UserInfoServiceImpl implements UserInfoService {
      */
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        UserInfo userInfo = this.userLogin(username, "" , "O001");
+        /*UserInfo userInfo = this.userLogin(username, "" , "O001");
         if(userInfo == null){
             throw new UsernameNotFoundException("用户不存在！");
         }
@@ -97,6 +101,11 @@ public class UserInfoServiceImpl implements UserInfoService {
         if(session!=null){
             session.setAttribute("CompanyList",this.getCompanyModelList(userInfo.getLoginname(), userInfo.getPhone()));
         }
-        return new User(userInfo.getLoginname(), userInfo.getPassword().toLowerCase(), new ArrayList<>());
+        return new User(userInfo.getLoginname(), userInfo.getPassword().toLowerCase(), new ArrayList<>());*/
+        PreRegisterHeader preRegisterHeader = preRegisterHeaderDAO.findByUsername(username);
+        if(preRegisterHeader == null){
+            throw new UsernameNotFoundException("用户不存在！");
+        }
+        return new User(preRegisterHeader.getUsername(), preRegisterHeader.getPassword(), new ArrayList<>());
     }
 }
