@@ -3,7 +3,7 @@ package com.magustek.com.htxtpc.manager.service.impl;
 import com.magustek.com.htxtpc.manager.bean.CompanyInvoiceInformationVO;
 import com.magustek.com.htxtpc.manager.dao.CompanyInvoiceInformationDAO;
 import com.magustek.com.htxtpc.manager.service.CompanyInvoiceInformationService;
-import com.magustek.com.htxtpc.user.bean.CompanyInvoiceInformation;
+import com.magustek.com.htxtpc.manager.bean.CompanyInvoiceInformation;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 

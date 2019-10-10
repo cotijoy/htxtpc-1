@@ -1,14 +1,12 @@
 package com.magustek.com.htxtpc.manager.dao;
 
-import com.magustek.com.htxtpc.user.bean.ReceiverAddressInformation;
+import com.magustek.com.htxtpc.manager.bean.ReceiverAddressInformation;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
-
-import java.util.Map;
 
 public interface ReceiverAddressInformationDAO extends CrudRepository<ReceiverAddressInformation, Long> {
 

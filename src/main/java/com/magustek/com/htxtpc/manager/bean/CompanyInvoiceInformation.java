@@ -1,4 +1,4 @@
-package com.magustek.com.htxtpc.user.bean;
+package com.magustek.com.htxtpc.manager.bean;
 
 import com.magustek.com.htxtpc.util.base.BaseEntity;
 import io.swagger.annotations.ApiModel;

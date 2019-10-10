@@ -1,6 +1,6 @@
 package com.magustek.com.htxtpc.manager.dao;
 
-import com.magustek.com.htxtpc.user.bean.RegisterLineitemAudit;
+import com.magustek.com.htxtpc.manager.bean.RegisterLineitemAudit;
 import io.lettuce.core.dynamic.annotation.Param;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

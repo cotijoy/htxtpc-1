@@ -1,6 +1,6 @@
 package com.magustek.com.htxtpc.manager.dao;
 
-import com.magustek.com.htxtpc.user.bean.CompanyInvoiceInformation;
+import com.magustek.com.htxtpc.manager.bean.CompanyInvoiceInformation;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;

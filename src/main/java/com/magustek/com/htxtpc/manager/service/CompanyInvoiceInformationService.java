@@ -1,7 +1,7 @@
 package com.magustek.com.htxtpc.manager.service;
 
 import com.magustek.com.htxtpc.manager.bean.CompanyInvoiceInformationVO;
-import com.magustek.com.htxtpc.user.bean.CompanyInvoiceInformation;
+import com.magustek.com.htxtpc.manager.bean.CompanyInvoiceInformation;
 import org.springframework.data.domain.Page;
 
 public interface CompanyInvoiceInformationService {

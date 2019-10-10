@@ -1,10 +1,8 @@
 package com.magustek.com.htxtpc.manager.service;
 
 import com.magustek.com.htxtpc.manager.bean.ReceiverAddressInformationVO;
-import com.magustek.com.htxtpc.user.bean.ReceiverAddressInformation;
+import com.magustek.com.htxtpc.manager.bean.ReceiverAddressInformation;
 import org.springframework.data.domain.Page;
-
-import java.util.List;
 
 public interface ReceiverAddressInformationService {
     ReceiverAddressInformation addOrUpdateReceiverAddressInformation (ReceiverAddressInformation receiverAddressInformation, String username);

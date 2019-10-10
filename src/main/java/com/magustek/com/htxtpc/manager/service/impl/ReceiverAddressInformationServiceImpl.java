@@ -3,7 +3,7 @@ package com.magustek.com.htxtpc.manager.service.impl;
 import com.magustek.com.htxtpc.manager.bean.ReceiverAddressInformationVO;
 import com.magustek.com.htxtpc.manager.dao.ReceiverAddressInformationDAO;
 import com.magustek.com.htxtpc.manager.service.ReceiverAddressInformationService;
-import com.magustek.com.htxtpc.user.bean.ReceiverAddressInformation;
+import com.magustek.com.htxtpc.manager.bean.ReceiverAddressInformation;
 import com.magustek.com.htxtpc.user.dao.UserDAO;
 import com.magustek.com.htxtpc.util.common.util.StringUtil;
 import org.springframework.data.domain.Page;

@@ -1,6 +1,5 @@
 package com.magustek.com.htxtpc.manager.bean;
 
-import com.magustek.com.htxtpc.user.bean.CompanyInvoiceInformation;
 import io.swagger.annotations.ApiModel;
 import lombok.Getter;
 import lombok.Setter;
